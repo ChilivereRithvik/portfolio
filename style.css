@@ -1,0 +1,578 @@
+ /* Add some basic styles for the navigation bar and footer */
+@import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
+
+ * {
+     margin: 0;
+     padding: 0;
+     box-sizing: border-box;
+font-family: 'Nunito', sans-serif;
+ }
+
+ *:focus{
+    outline: none;
+ }
+
+
+
+
+
+
+
+
+
+ 
+ body {
+     font-family: Arial, sans-serif;
+     margin: 0;
+     padding: 0;
+background-color: #1a1919;
+     color:#1c1c1c;
+     overflow-x: hidden;
+
+
+ }
+body::-webkit-scrollbar{
+    display: none;
+    scroll-behavior: smooth;
+}
+ header {
+     background-color:#1b1b1b;
+     color: white;
+     padding: 10px 0;
+     display: flex;
+     justify-content: space-around;
+     align-items: center;
+     position: sticky;
+     cursor: pointer;
+     top: 0;
+height: 5rem;
+width: 100vw;
+ }
+
+ header h1 {
+     margin: 0;
+     padding: 0;
+     font-size: 24px;
+     margin-left: 20px;
+     /* Add space for the logo */
+ }
+
+ nav {
+     display: flex;
+     align-items: center;
+     justify-content: space-around;
+ }
+
+ nav a {
+     color: white;
+     text-decoration: none;
+padding:10px 20px;
+        transition: all ease-in;
+        font-weight: 600;
+       border-radius: 3px;
+       width: fit-content;
+       row-gap: 2rem;
+ }
+
+nav a:hover{
+    background-color: aliceblue;
+    color: #111;
+
+}
+
+
+.heropage{
+background-color:#1b1b1b;
+display: flex;
+justify-content: space-around;
+align-items: center;
+width: 100%;
+    height: calc(100vh - 150px);
+font-size: xx-large;
+font-weight: 800;
+
+}
+.heropage img{
+    border-radius:0.5rem;
+    max-width: 25rem;
+
+}
+.icons a{
+    margin-top: 10px;
+    text-decoration: none;
+    color: aliceblue;
+
+padding: 10px;
+cursor: pointer;
+}
+.hello{
+    font-size: large;
+}
+.btn{
+    background-color:aliceblue;
+    width: 8rem;
+    max-width: 8rem;
+    height: 3rem;
+    font-weight: 900;
+    color: #111;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    margin-top: 15px;
+    font-size: medium;
+
+}
+.webdev{
+    font-size: 3rem;
+}
+.btn:hover{
+    background-color:#1b1b1b;
+    color:aliceblue;
+    border: 2px solid aliceblue;
+}
+
+
+
+
+
+
+
+/* About page ----------------------- */
+
+
+.aboutpage{
+    display: flex;
+justify-content: center;
+    align-items: center;
+    height: calc(100vh - 200px);
+    width: 100%;
+   column-gap: 5rem;
+   background-color: #111;
+   flex-direction: column;
+
+
+
+}
+.extra{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+}
+.aboutpage img{
+    width: 23rem;
+}
+
+.aboutpage .aboutinfo{
+    width: 40rem;
+}
+
+/* skills container-------------------------- */
+.Skills{
+    background-color: #1a1919;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 200px;
+    flex-direction: column;
+}
+.skilldetails{
+text-align: center;
+}
+.skilldetails h1{
+    font-size: 2rem;
+}
+.skilldetails span{
+    font-size: small;
+}
+
+.list{
+    display: flex;
+    justify-content: space-around;
+    column-gap: 1rem;
+
+max-width: 100%;
+overflow-x: hidden;
+}
+.list svg{
+   width: 4.5rem;
+}
+
+
+
+/* projects --------------------------------------- */
+.projects{
+    background-color: #111;
+    display: flex;
+    justify-content:center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+    row-gap: 5rem;
+
+}
+.pro{
+    text-align: center;
+}
+.projectlist{
+    display: flex;
+    justify-content:center;
+    width: 100vh;
+column-gap: 20px;
+
+}
+.card1{
+    width: 20rem;
+    height: fit-content;
+    background-color: white;
+    color: #111;
+    border-radius: 3px;
+    display: flex;
+    justify-content:start;
+    align-items: center;
+    flex-direction: column;
+    text-align: start;
+    padding: 10px;
+    text-align: center;
+}
+.card1 img{
+    width: 15rem;
+}
+
+.cardbtn{
+    background-color: #111;
+    color: aliceblue;
+    padding: 10px;
+    border-radius: 3px;
+border: 2px solid #111;
+    margin-top: 5px;
+    font-weight: 550;
+
+}
+.cardbtn:hover{
+    border: 1px solid black;
+    color: black;
+    background-color: aliceblue;
+}
+
+/* contact form--------------------------- */
+.contactForm{
+    background-color: #1a1919;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+    /* height: calc(100vh - 100px); */
+
+
+}
+form{
+    display: flex;
+justify-content:center;
+align-items: flex-start;
+flex-direction: column;
+row-gap: 10px;
+width:500px;
+flex-wrap: wrap;
+height: fit-content;
+padding: 10px;
+height: 100%;
+cursor: pointer;
+}
+form label{
+margin-top: 10px;
+    
+}
+form input{
+    width: 100%;
+    height:30px;
+    padding: 5px;
+    border-radius: 3px;
+    border: 1px solid;
+    outline: none;
+}
+form input::placeholder{
+padding: 10px;
+}
+form textarea{
+    width: 100%;
+    height: 200px;
+    border: 1px solid #111;
+    outline: none;
+    border-radius: 5px;
+    max-width: 100%;
+    max-height: 15rem;
+    padding: 10px;
+  
+}
+form textarea::placeholder{
+    padding: 10px;
+}
+form .cardbtn{
+    background-color: aliceblue;
+    color:#111;
+    border: none;
+    width: 8rem;
+}
+form .cardbtn:hover{
+    border: 2px solid white;
+    background-color: #111;
+    color: aliceblue;
+}
+/* ----------------------------------- */
+
+
+body {
+    transition: background-color 0.5s, color 0.5s;
+}
+
+/* Styles for dark mode */
+body.dark-mode {
+    background-color: #1e1e1e;
+    /* Dark background color */
+    color: #ffffff;
+    /* Dark text color */
+}
+
+.dark-mode .home {
+    background-color: #333;
+    /* Dark background color for container1 */
+    color: #fff;
+    /* Dark text color for container1 */
+}
+
+.dark-mode .container2 {
+    background-color: #555;
+    /* Dark background color for container2 */
+    color: #fff;
+    /* Dark text color for container2 */
+}
+
+/* Styles for light mode */
+body.light-mode {
+    background-color: #ffffff;
+    /* Light background color */
+    color: #000000;
+    /* Light text color */
+}
+
+.light-mode .home {
+    background-color: #eee;
+    /* Light background color for container1 */
+    color: #000;
+    /* Light text color for container1 */
+}
+
+.light-mode .container2 {
+    background-color: #ddd;
+    /* Light background color for container2 */
+    color: #000;
+    /* Light text color for container2 */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ------------------------------------------------ */
+ footer {
+
+    bottom: 0;
+     background-color: #1b1b1b;
+     color: white;
+     text-align: center;
+     width: 100%;
+     height: 15rem;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+  column-gap: 5rem;
+
+
+ }
+ footer ul{
+    list-style: none;
+ }
+footer li{
+    margin-bottom: 10px;
+}
+
+footer .hed span{
+    font-size: small;
+}
+ /* Add styles for the menu icon */
+ @media screen and (max-width: 768px) {
+    header{
+        align-items: center;
+        position: sticky;
+        top: 0;
+    }
+main{
+overflow: hidden;
+}
+     nav {
+         display: none;
+         flex-direction: column;
+         align-items:center;
+         background-color: #1b1b1b;
+         position: absolute;
+         top: 60px;
+         right: 0;
+         width: 100%;
+         justify-content: space-around;
+     }
+
+     nav.active {
+         display: flex;
+     }
+
+     nav a {
+         padding: 10px;
+         text-align: center;
+         width: 100%;
+     }
+
+     #menu-icon {
+    cursor: pointer;
+         color:aliceblue;
+         font-size: 2rem;
+         cursor: pointer;
+         padding: 10px;
+         margin-right: 20px;
+     }
+         .heropage{
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+            row-gap: 2rem;
+        height: calc(100vh - 100px);
+         }
+         .heropage img{
+            object-fit:cover;
+            max-width: 20rem;
+         }
+         .webdev{
+            font-size: 2rem;
+         }
+
+         .aboutpage{
+            display: flex;
+            flex-direction: column;
+            max-width: 50rem;
+            justify-content: center;
+            align-items: center;
+            height: fit-content;
+            padding: 30px 0;
+
+         }
+         .aboutinfo{
+            max-width: 20rem;
+            text-align: center;
+         }
+         .extra{
+            flex-direction: column;
+            width: fit-content;
+       
+         }
+.list svg{
+    width: 3rem;
+}
+.projects{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height:fit-content;
+    width: 100vw;
+    background-color:#111;
+    padding: 20px;
+    text-align: center;
+    flex-direction: column;
+}
+.projectlist{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+ row-gap: 20px;
+   
+}
+.contactForm{
+    display: flex;
+    justify-content:flex-start;
+ align-items: center;
+    flex-wrap: wrap;
+    width: 100vw;
+    height: 100vh;
+
+    margin-top: 12px;
+    height: fit-content;
+    padding: 20px;
+
+}
+.contachdet{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+    flex-direction: column;
+
+}
+.contachdet span{
+    font-size:small;
+}
+form {
+    width: 100%;
+    flex-wrap: wrap;
+    width: 22rem;
+    max-width: 20rem;
+
+}
+
+form input{
+width: 100%;
+}
+
+footer{
+    flex-direction: column;
+}
+footer ul{
+cursor: pointer;
+row-gap: 2rem;
+
+}
+footer li {
+    text-decoration: none;
+}
+
+
+
+
+
+ }
+
+ /* Add styles for desktop screens */
+ @media screen and (min-width: 769px) {
+     #menu-icon {
+         display: none;
+         /* Hide the menu icon on desktop */
+     }
+
+     nav {
+         display: flex;
+      
+         /* Display all links on desktop */
+     }
+ }
