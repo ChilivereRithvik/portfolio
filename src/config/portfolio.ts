@@ -1,0 +1,354 @@
+export const personalInfo = {
+  name: "Chiliveri Rithvik",
+  displayName: "Rithvik",
+  title: "Full-Stack Developer",
+  location: "Hyderabad, India",
+  heroHeadline:
+    "I build high-performance web systems, mobile applications, and AI-powered automation.",
+  description:
+    "Full-stack developer focused on scalable backend systems, performance optimization, cloud infrastructure, and practical AI automation.",
+  statusLabels: [
+    "Full-Stack Development",
+    "Backend & Infrastructure",
+    "AI & Automation",
+  ],
+  profileImage: "",
+  email: "chiliveririthvik444@gmail.com",
+  resumePath: "/resume/resume.pdf",
+  socialLinks: [
+    {
+      name: "GitHub",
+      url: "https://github.com/rithvik-zeto",
+      icon: "github",
+    },
+    {
+      name: "LinkedIn",
+      url: "https://linkedin.com/in/rithvik-zeto",
+      icon: "linkedin",
+    },
+    {
+      name: "Medium",
+      url: "https://medium.com/@rithvik-zeto",
+      icon: "medium",
+    },
+  ],
+};
+
+export const availability = {
+  status: null,
+  label: null,
+};
+
+export type Project = {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  achievements: string[];
+  metrics?: {
+    label: string;
+    value: string;
+  }[];
+  technologies: string[];
+  links: {
+    github?: string;
+    live?: string;
+  };
+  status: "live" | "open-source" | "archived";
+  image?: string;
+};
+
+export const projects: Project[] = [
+  {
+    id: "trunkie",
+    title: "Trunkie",
+    category: "Enterprise EdTech Platform",
+    description:
+      "A multi-tenant education management platform with role-based access control, academic and administrative workflows, AI processing pipelines, school transport management, and cross-platform mobile functionality.",
+    achievements: [
+      "Supported a platform serving over 100,000 users.",
+      "Implemented tenant-aware RBAC across 13 user roles.",
+      "Reduced API response latency by over 80%, from ~3,000 ms to under 600 ms, through PostgreSQL query optimization, indexing, and Redis caching.",
+      "Built asynchronous AI processing pipelines and background job orchestration with Inngest, including token consumption tracking and API usage metering.",
+      "Developed a node-based visual workflow automation interface using React Flow.",
+      "Developed school transport management with live bus tracking.",
+      "Contributed cross-platform mobile functionality using React Native, Expo, and Expo Router.",
+      "Contributed to production infrastructure using AWS ECS Fargate, RDS, ECR, S3, Terraform, Docker, and CI/CD.",
+    ],
+    metrics: [
+      { label: "requests", value: "94,968" },
+      { label: "concurrent users", value: "20" },
+      { label: "peak throughput", value: "76.8 req/s" },
+      { label: "pass rate", value: "93.3%" },
+    ],
+    technologies: [
+      "TypeScript",
+      "React.js",
+      "Next.js",
+      "React Native",
+      "Expo",
+      "Redux Toolkit",
+      "Tailwind CSS",
+      "Node.js",
+      "PostgreSQL",
+      "Redis",
+      "Prisma",
+      "React Flow",
+      "Inngest",
+      "AWS ECS Fargate",
+      "AWS RDS",
+      "Terraform",
+      "Docker",
+    ],
+    links: {},
+    status: "live",
+  },
+  {
+    id: "anantix",
+    title: "Anantix",
+    category: "Omnichannel AI Automation Platform",
+    description:
+      "An AI-powered customer operations and automation platform built around voice communication, WhatsApp, and email workflows.",
+    achievements: [
+      "Architected and developed the frontend using Next.js, Redux Toolkit, and shadcn/ui.",
+      "Developed interfaces for managing AI agents, customer interactions, and automation workflows.",
+      "Worked on automated voice communication using FreeSWITCH and dialplans for call routing and processing.",
+      "Implemented asynchronous email automation using Inngest and cron-based scheduling.",
+      "Integrated communication workflows across Voice, WhatsApp, and Email.",
+      "Managed deployments on Railway and contributed to AWS ECS deployment automation through CI/CD pipelines.",
+    ],
+    technologies: [
+      "TypeScript",
+      "Next.js",
+      "Redux Toolkit",
+      "shadcn/ui",
+      "FreeSWITCH",
+      "Inngest",
+      "Node.js",
+      "Railway",
+      "AWS ECS",
+    ],
+    links: {},
+    status: "live",
+  },
+  {
+    id: "call-the-doctor",
+    title: "Call the Doctor",
+    category: "Healthcare Platform",
+    description:
+      "A healthcare application across web, iOS, and Android covering frontend, backend APIs, authentication, payments, and location-based features.",
+    achievements: [
+      "Independently architected and developed using React.js, React Native, and the T3 Stack.",
+      "Implemented REST APIs, backend business logic, and PostgreSQL integrations.",
+      "Integrated Better Auth for authentication.",
+      "Integrated Razorpay for payment processing.",
+      "Used Google Maps APIs for real-time location tracking.",
+      "Configured AWS EC2, Amazon S3, and Redis for hosting, object storage, and caching.",
+      "Deployed web application and published mobile apps on App Store and Google Play Store.",
+    ],
+    technologies: [
+      "TypeScript",
+      "React.js",
+      "React Native",
+      "T3 Stack",
+      "PostgreSQL",
+      "Better Auth",
+      "Razorpay",
+      "Google Maps API",
+      "AWS EC2",
+      "AWS S3",
+      "Redis",
+    ],
+    links: {},
+    status: "live",
+  },
+  {
+    id: "ops-ai",
+    title: "Ops AI",
+    category: "AI Operations Platform",
+    description:
+      "An AI operations application focused on reusable UI components, authenticated workflows, and API-driven frontend functionality.",
+    achievements: [
+      "Developed reusable frontend components using React.js and shadcn/ui.",
+      "Implemented JWT-based authentication.",
+      "Integrated REST APIs through TanStack Query.",
+      "Used asynchronous data fetching, caching, and server-state management.",
+    ],
+    technologies: ["React.js", "shadcn/ui", "JWT", "TanStack Query", "TypeScript"],
+    links: {},
+    status: "live",
+  },
+];
+
+export type Experience = {
+  id: string;
+  role: string;
+  company: string;
+  location: string;
+  duration: string;
+  description: string;
+  projects: { title: string; slug: string; category: string }[];
+};
+
+export const experiences: Experience[] = [
+  {
+    id: "zeto-senior",
+    role: "Full Stack Developer",
+    company: "Zeto Studio",
+    location: "Hyderabad, India",
+    duration: "May 2025 – Present",
+    description:
+      "Contributed to the development and deployment of enterprise applications across EdTech and AI-powered customer operations, including full-stack architecture, backend optimization, workflow automation, performance testing, and cloud infrastructure.",
+    projects: [
+      { title: "Trunkie", slug: "trunkie", category: "Enterprise EdTech Platform" },
+      { title: "Anantix", slug: "anantix", category: "Omnichannel AI Automation Platform" },
+    ],
+  },
+  {
+    id: "zeto-intern",
+    role: "Full Stack Developer Intern",
+    company: "Zeto Studio",
+    location: "Hyderabad, India",
+    duration: "January 2025 – April 2025",
+    description:
+      "Contributed to healthcare and AI operations platform development, focusing on full-stack architecture, backend APIs, authentication, payments, and real-time features.",
+    projects: [
+      { title: "Call the Doctor", slug: "call-the-doctor", category: "Healthcare Platform" },
+      { title: "Ops AI", slug: "ops-ai", category: "AI Operations Platform" },
+    ],
+  },
+];
+
+export type Technology = {
+  name: string;
+  category: "language" | "frontend" | "backend" | "database" | "ai" | "testing" | "devops" | "tools";
+};
+
+export const technologies: Technology[] = [
+  // Languages
+  { name: "TypeScript", category: "language" },
+  { name: "JavaScript", category: "language" },
+  { name: "Python", category: "language" },
+  // Frontend
+  { name: "React.js", category: "frontend" },
+  { name: "Next.js", category: "frontend" },
+  { name: "React Native", category: "frontend" },
+  { name: "Expo", category: "frontend" },
+  { name: "Expo Router", category: "frontend" },
+  { name: "Redux Toolkit", category: "frontend" },
+  { name: "Tailwind CSS", category: "frontend" },
+  { name: "shadcn/ui", category: "frontend" },
+  { name: "TanStack Query", category: "frontend" },
+  { name: "React Flow", category: "frontend" },
+  // Backend
+  { name: "Node.js", category: "backend" },
+  { name: "Express.js", category: "backend" },
+  { name: "NestJS", category: "backend" },
+  { name: "Fastify", category: "backend" },
+  { name: "Bun", category: "backend" },
+  { name: "tRPC", category: "backend" },
+  { name: "REST APIs", category: "backend" },
+  // Database
+  { name: "PostgreSQL", category: "database" },
+  { name: "MongoDB", category: "database" },
+  { name: "Redis", category: "database" },
+  { name: "Prisma", category: "database" },
+  { name: "Drizzle ORM", category: "database" },
+  { name: "JWT", category: "database" },
+  { name: "Better Auth", category: "database" },
+  { name: "Zod", category: "database" },
+  // AI
+  { name: "LangChain", category: "ai" },
+  { name: "LangGraph", category: "ai" },
+  { name: "Inngest", category: "ai" },
+  { name: "FreeSWITCH", category: "ai" },
+  { name: "API Usage Metering", category: "ai" },
+  // Testing
+  { name: "Grafana k6", category: "testing" },
+  { name: "Playwright", category: "testing" },
+  // DevOps
+  { name: "AWS EC2", category: "devops" },
+  { name: "AWS ECS Fargate", category: "devops" },
+  { name: "AWS RDS", category: "devops" },
+  { name: "AWS ECR", category: "devops" },
+  { name: "AWS S3", category: "devops" },
+  { name: "AWS Lambda", category: "devops" },
+  { name: "Docker", category: "devops" },
+  { name: "Terraform", category: "devops" },
+  { name: "GitHub Actions", category: "devops" },
+  { name: "Railway", category: "devops" },
+  { name: "Vercel", category: "devops" },
+  { name: "Git", category: "devops" },
+  // Tools
+  { name: "GitHub", category: "tools" },
+  { name: "VS Code", category: "tools" },
+  { name: "Figma", category: "tools" },
+  { name: "Cursor", category: "tools" },
+];
+
+export const techCategories = [
+  { id: "all", label: "All" },
+  { id: "frontend", label: "Frontend" },
+  { id: "backend", label: "Backend" },
+  { id: "language", label: "Languages" },
+  { id: "database", label: "Database" },
+  { id: "ai", label: "AI" },
+  { id: "devops", label: "DevOps" },
+  { id: "testing", label: "Testing" },
+  { id: "tools", label: "Tools" },
+];
+
+export type Education = {
+  institution: string;
+  degree: string;
+  duration: string;
+};
+
+export const education: Education = {
+  institution: "Vidya Jyothi Institute of Technology",
+  degree: "Bachelor of Technology — Computer Science and Engineering",
+  duration: "2021–2025",
+};
+
+export type Blog = {
+  id: string;
+  title: string;
+  excerpt: string;
+  date: string;
+  readTime: string;
+  tags: string[];
+  url: string;
+};
+
+export const blogs: Blog[] = [
+  {
+    id: "rate-limiting-redis",
+    title: "How to Add a Simple Rate Limiter to an Express App Using Redis Under the Hood",
+    excerpt:
+      "A practical walkthrough of building a Redis-based rate limiter for an Express API using atomic operations and TTL.",
+    date: "2025-10-12",
+    readTime: "4 min read",
+    tags: ["Node.js", "Rate Limiting", "Software Development"],
+    url: "https://medium.com/@rithvik-zeto/rate-limiting-using-redis",
+  },
+  {
+    id: "prettier-husky-setup",
+    title: "I Just Discovered Prettier and Husky and Now I'm Wondering Why I Didn't Start Earlier",
+    excerpt:
+      "A practical guide to setting up Prettier and Husky to enforce consistent formatting at commit time.",
+    date: "2025-10-10",
+    readTime: "3 min read",
+    tags: ["Prettier", "Husky", "Developer Experience"],
+    url: "https://medium.com/@rithvik-zeto/prettier-husky-setup",
+  },
+  {
+    id: "stopped-using-canva",
+    title: "How I Stopped Using Canva for Every Milestone Post",
+    excerpt:
+      "A practical guide to creating shareable milestone cards without a design background.",
+    date: "2025-10-08",
+    readTime: "3 min read",
+    tags: ["Indie Hacking", "Building In Public", "Developer Experience"],
+    url: "https://medium.com/@rithvik-zeto/stopped-using-canva",
+  },
+];

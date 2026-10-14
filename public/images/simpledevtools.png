@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="160" viewBox="0 0 300 160" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f43f5e"/>
+      <stop offset="100%" stop-color="#f97316"/>
+    </linearGradient>
+  </defs>
+  <rect width="300" height="160" fill="url(#grad2)"/>
+  <text x="150" y="85" font-family="system-ui, sans-serif" font-size="14" fill="white" text-anchor="middle" opacity="0.7">Simple Dev Tools</text>
+</svg>
