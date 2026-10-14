@@ -5,30 +5,23 @@ export const personalInfo = {
   location: "Hyderabad, India",
   heroHeadline:
     "I build high-performance web systems, mobile applications, and AI-powered automation.",
-  description:
-    "Full-stack developer focused on scalable backend systems, performance optimization, cloud infrastructure, and practical AI automation.",
-  statusLabels: [
-    "Full-Stack Development",
-    "Backend & Infrastructure",
-    "AI & Automation",
-  ],
   profileImage: "/images/profile.png",
   email: "chiliveririthvik444@gmail.com",
   resumePath: "/images/Rithvik_Resume_V1.pdf",
   socialLinks: [
     {
       name: "GitHub",
-      url: "https://github.com/rithvik-zeto",
+      url: "https://github.com/ChilivereRithvik",
       icon: "github",
     },
     {
       name: "LinkedIn",
-      url: "https://linkedin.com/in/rithvik-zeto",
+      url: "https://www.linkedin.com/in/ch-rithvik-b3338823a/",
       icon: "linkedin",
     },
     {
       name: "Medium",
-      url: "https://medium.com/@rithvik-zeto",
+      url: "https://medium.com/@chiliveririthvik444",
       icon: "medium",
     },
   ],
@@ -322,33 +315,23 @@ export type Blog = {
 
 export const blogs: Blog[] = [
   {
-    id: "rate-limiting-redis",
-    title: "How to Add a Simple Rate Limiter to an Express App Using Redis Under the Hood",
+    id: "automating-outbound-call-campaigns",
+    title: "Automating Outbound Call Campaigns with Redis and Inngest",
     excerpt:
-      "A practical walkthrough of building a Redis-based rate limiter for an Express API using atomic operations and TTL.",
-    date: "2025-10-12",
-    readTime: "4 min read",
-    tags: ["Node.js", "Rate Limiting", "Software Development"],
-    url: "https://medium.com/@rithvik-zeto/rate-limiting-using-redis",
+      "A practical guide to building automated outbound call campaign architecture using Redis for call state management and Inngest for orchestration.",
+    date: "2025-10-01",
+    readTime: "5 min read",
+    tags: ["Inngest", "Redis", "Telecom", "Automation"],
+    url: "https://medium.com/@chiliveririthvik444/automating-outbound-call-campaigns-with-redis-and-inngest-caa869bd950c",
   },
   {
-    id: "prettier-husky-setup",
-    title: "I Just Discovered Prettier and Husky and Now I'm Wondering Why I Didn't Start Earlier",
+    id: "calling-architecture-redis-inngest",
+    title: "Building a Calling Architecture with Redis and Inngest",
     excerpt:
-      "A practical guide to setting up Prettier and Husky to enforce consistent formatting at commit time.",
-    date: "2025-10-10",
-    readTime: "3 min read",
-    tags: ["Prettier", "Husky", "Developer Experience"],
-    url: "https://medium.com/@rithvik-zeto/prettier-husky-setup",
-  },
-  {
-    id: "stopped-using-canva",
-    title: "How I Stopped Using Canva for Every Milestone Post",
-    excerpt:
-      "A practical guide to creating shareable milestone cards without a design background.",
-    date: "2025-10-08",
-    readTime: "3 min read",
-    tags: ["Indie Hacking", "Building In Public", "Developer Experience"],
-    url: "https://medium.com/@rithvik-zeto/stopped-using-canva",
+      "Deep dive into designing a scalable calling architecture using Redis for real-time call state and Inngest for workflow orchestration.",
+    date: "2025-09-25",
+    readTime: "6 min read",
+    tags: ["Redis", "Inngest", "Architecture", "Telecom"],
+    url: "https://medium.com/@chiliveririthvik444/building-a-calling-architecture-with-redis-and-inngest-787e506a00cc",
   },
 ];

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Inter, Geist_Mono } from "next/font/google";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { CurrentYear } from "@/components/CurrentYear";
+import { Footer } from "@/components/Footer";
 import "./globals.css";
 
 const inter = Inter({
@@ -43,10 +43,27 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                const theme = localStorage.theme;
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (theme === 'dark' || (!theme && prefersDark)) {
+                  document.documentElement.classList.add('dark');
+                } else {
+                  document.documentElement.classList.remove('dark');
+                }
+              } catch (_) {}
+            `,
+          }}
+        />
+      </head>
       <body
         className={`${inter.variable} ${geistMono.variable} min-h-screen bg-background text-foreground antialiased`}
       >
-        <div className="max-w-2xl mx-auto px-4">
+        <div className="mx-auto max-w-4xl border-x border-dashed border-border px-4">
           <header className="h-16 flex items-center justify-between border-b border-border">
             <nav className="flex items-center space-x-6 text-sm">
               {navItems.map((item) => (
@@ -62,16 +79,7 @@ export default function RootLayout({
             <ThemeToggle />
           </header>
           {children}
-          <footer className="border-t border-border py-8 mt-16">
-            <div className="text-center space-y-4">
-              <p className="text-sm text-muted-foreground">
-                Chiliveri Rithvik · Full-Stack Developer · Hyderabad, India
-              </p>
-          <p className="text-xs text-muted-foreground">
-            © <CurrentYear /> Chiliveri Rithvik. All rights reserved.
-          </p>
-            </div>
-          </footer>
+          <Footer />
         </div>
       </body>
     </html>

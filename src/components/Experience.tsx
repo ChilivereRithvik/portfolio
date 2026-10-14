@@ -1,8 +1,5 @@
 import type { Experience } from "@/config/portfolio";
 import { projects, experiences } from "@/config/portfolio";
-import { Tag } from "@/components/ui/Tag";
-import { StatusBadge } from "@/components/ui/StatusBadge";
-import { TechIcon } from "@/lib/techIcons";
 import Link from "next/link";
 
 export { experiences };
@@ -28,81 +25,29 @@ export function ExperienceEntry({ experience }: ExperienceProps) {
 
       <p className="text-sm text-muted-foreground">{experience.description}</p>
 
-      <div className="space-y-4 mt-3">
+      <ul className="space-y-3 mt-2">
         {experience.projects.map((proj) => {
           const fullProject = projects.find((p) => p.id === proj.slug);
+          if (!fullProject) return null;
+
           return (
-            <div key={proj.slug} className="space-y-2">
-              {fullProject && (
-                <>
-                  <Link href={`/projects/${fullProject.id}`}>
-                    <div className="flex items-center gap-2">
-                      <Tag variant="outline">{fullProject.title}</Tag>
-                      <StatusBadge status={
-                        fullProject.status === "live"
-                          ? "live"
-                          : fullProject.status === "open-source"
-                            ? "experimenting"
-                            : "archived"
-                      }>
-                        {fullProject.status === "live"
-                          ? "Live"
-                          : fullProject.status === "open-source"
-                            ? "Open Source"
-                            : "Archived"}
-                      </StatusBadge>
-                    </div>
-                  </Link>
-
-                  <p className="text-xs text-muted-foreground">
-                    {fullProject.description}
-                  </p>
-
-                  {fullProject.achievements.length > 0 && (
-                    <ul className="list-none space-y-0.5">
-                      {fullProject.achievements.slice(0, 4).map((ach, i) => (
-                        <li
-                          key={i}
-                          className="text-xs text-muted-foreground"
-                        >
-                          • {ach}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-
-                  {fullProject.metrics && fullProject.metrics.length > 0 && (
-                    <div className="flex flex-wrap gap-3 mt-1.5">
-                      {fullProject.metrics.map((m) => (
-                        <div key={m.label} className="flex flex-col">
-                          <span className="text-sm font-semibold text-foreground">
-                            {m.value}
-                          </span>
-                          <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
-                            {m.label}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  <div className="flex flex-wrap gap-1.5">
-                    {fullProject.technologies.map((tech) => (
-                      <span
-                        key={tech}
-                        className="flex items-center gap-1 px-2.5 py-1 text-[10px] font-medium text-foreground bg-muted/50 border border-border rounded-md"
-                      >
-                        <TechIcon name={tech} />
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
+            <li key={proj.slug} className="space-y-1">
+              <Link
+                href={`/projects/${fullProject.id}`}
+                className="text-sm font-medium text-foreground hover:text-foreground/80 transition-colors"
+              >
+                {fullProject.title}
+              </Link>
+              <p className="text-xs text-muted-foreground">
+                {proj.category}
+              </p>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                {fullProject.description}
+              </p>
+            </li>
           );
         })}
-      </div>
+      </ul>
     </div>
   );
 }
@@ -113,7 +58,7 @@ type ExperienceListProps = {
 
 export function ExperienceList({ experiences }: ExperienceListProps) {
   return (
-    <section className="py-12">
+    <section id="experience" className="py-12">
       <div className="space-y-8">
         <div>
           <h2 className="text-xl font-semibold text-foreground">Experience</h2>

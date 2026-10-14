@@ -1,62 +1,27 @@
-"use client";
-
-import { useState } from "react";
-import { technologies, techCategories } from "@/config/portfolio";
-import { TechIcon } from "@/lib/techIcons";
-
-const categoryLabels = {
-  language: "Languages",
-  frontend: "Frontend",
-  backend: "Backend",
-  database: "Database",
-  ai: "AI",
-  devops: "DevOps",
-  testing: "Testing",
-  tools: "Tools",
-};
+import { technologies } from "@/config/portfolio";
+import { techCategoryDotClass } from "@/lib/techColors";
 
 export function TechStack() {
-  const [activeCategory, setActiveCategory] = useState("all");
-
-  const filteredTechs =
-    activeCategory === "all"
-      ? technologies
-      : technologies.filter((t) => t.category === activeCategory);
-
   return (
     <section className="border-t border-border py-12">
       <div className="space-y-6">
         <div>
           <h2 className="text-xl font-semibold text-foreground">Tech Stack</h2>
           <p className="text-sm text-muted-foreground mt-1">
-            Tools I reach for, hover to explore.
+            Tools I reach for day to day.
           </p>
         </div>
 
         <div className="flex flex-wrap gap-2">
-          {techCategories.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setActiveCategory(cat.id)}
-              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
-                activeCategory === cat.id
-                  ? "bg-foreground text-background"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          {filteredTechs.map((tech) => (
+          {technologies.map((tech) => (
             <span
               key={tech.name}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-foreground bg-muted/50 border border-border rounded-md hover:bg-muted transition-colors"
-              title={categoryLabels[tech.category as keyof typeof categoryLabels]}
+              className="flex items-center gap-2 px-3 py-1.5 text-xs text-foreground bg-muted/50 border border-border rounded-md"
             >
-              <TechIcon name={tech.name} />
+              <span
+                className={`h-2 w-2 shrink-0 rounded-full ${techCategoryDotClass(tech.category)}`}
+                aria-hidden
+              />
               {tech.name}
             </span>
           ))}
