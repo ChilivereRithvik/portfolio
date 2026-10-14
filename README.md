@@ -65,3 +65,4 @@ Set `profileImage: "/images/profile.jpg"` to use a real photo instead of the `CR
 - **Icons**: Lucide React + inline SVG social icons
 - **TypeScript**: Strict mode enabled
 - **Linting**: ESLint with Next.js config
+# portfolio
