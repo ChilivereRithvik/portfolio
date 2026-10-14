@@ -128,7 +128,7 @@ export function Hero() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 border-t border-border">
+      <div className="grid grid-cols-1 sm:grid-cols-2 border-t border-b border-border">
         {heroLinks.map((link) => (
           <HeroLinkCard key={link.name} {...link} />
         ))}

@@ -7,17 +7,17 @@
   --font-mono: var(--font-geist-mono);
 
   --color-background: #ffffff;
-  --color-foreground: #171717;
+  --color-foreground: #1a1a1a;
   --color-card: #ffffff;
-  --color-card-foreground: #171717;
+  --color-card-foreground: #1a1a1a;
   --color-popover: #ffffff;
-  --color-popover-foreground: #171717;
+  --color-popover-foreground: #1a1a1a;
   --color-primary: #0f172a;
   --color-primary-foreground: #f8fafc;
   --color-secondary: #f1f5f9;
   --color-secondary-foreground: #0f172a;
   --color-muted: #f1f5f9;
-  --color-muted-foreground: #6b7280;
+  --color-muted-foreground: #737b8c;
   --color-accent: #f1f5f9;
   --color-accent-foreground: #0f172a;
   --color-destructive: #dc2626;
@@ -40,7 +40,7 @@
     --color-secondary: #171717;
     --color-secondary-foreground: #f8fafc;
     --color-muted: #262626;
-    --color-muted-foreground: #737373;
+    --color-muted-foreground: #9ca3af;
     --color-accent: #262626;
     --color-accent-foreground: #f8fafc;
     --color-border: #272727;
