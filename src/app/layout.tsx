@@ -22,6 +22,12 @@ export const metadata: Metadata = {
   },
   description:
     "Full-stack developer focused on scalable backend systems, performance optimization, cloud infrastructure, and practical AI automation.",
+  icons: {
+    icon: [
+      { url: "/images/profile.png", type: "image/png" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+  },
   openGraph: {
     type: "website",
     locale: "en-US",

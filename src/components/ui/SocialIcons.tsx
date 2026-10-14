@@ -1,5 +1,22 @@
 import type { SVGProps } from "react";
+import { siGmail } from "simple-icons";
 import { cn } from "@/lib/utils";
+
+export function GmailIcon({ className, ...props }: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="1em"
+      height="1em"
+      className={cn("h-5 w-5 shrink-0", className)}
+      role="img"
+      aria-label="Gmail"
+      {...props}
+    >
+      <path fill={`#${siGmail.hex}`} d={siGmail.path} />
+    </svg>
+  );
+}
 
 export function GitHubIcon({ className, ...props }: SVGProps<SVGSVGElement>) {
   return (
