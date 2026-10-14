@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { technologies, techCategories } from "@/config/portfolio";
+import { TechIcon } from "@/lib/techIcons";
 
 const categoryLabels = {
   language: "Languages",
@@ -23,7 +24,7 @@ export function TechStack() {
       : technologies.filter((t) => t.category === activeCategory);
 
   return (
-    <section className="py-12">
+    <section className="border-t border-border py-12">
       <div className="space-y-6">
         <div>
           <h2 className="text-xl font-semibold text-foreground">Tech Stack</h2>
@@ -41,7 +42,7 @@ export function TechStack() {
                 activeCategory === cat.id
                   ? "bg-foreground text-background"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted"
-              }}`}
+              }`}
             >
               {cat.label}
             </button>
@@ -52,9 +53,10 @@ export function TechStack() {
           {filteredTechs.map((tech) => (
             <span
               key={tech.name}
-              className="px-3 py-1.5 text-xs text-foreground bg-muted/50 border border-border rounded-md hover:bg-muted transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-foreground bg-muted/50 border border-border rounded-md hover:bg-muted transition-colors"
               title={categoryLabels[tech.category as keyof typeof categoryLabels]}
             >
+              <TechIcon name={tech.name} />
               {tech.name}
             </span>
           ))}

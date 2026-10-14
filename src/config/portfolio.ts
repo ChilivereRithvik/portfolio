@@ -12,9 +12,9 @@ export const personalInfo = {
     "Backend & Infrastructure",
     "AI & Automation",
   ],
-  profileImage: "",
+  profileImage: "/images/profile.png",
   email: "chiliveririthvik444@gmail.com",
-  resumePath: "/resume/resume.pdf",
+  resumePath: "/images/Rithvik_Resume_V1.pdf",
   socialLinks: [
     {
       name: "GitHub",

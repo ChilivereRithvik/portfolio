@@ -2,9 +2,9 @@ import { personalInfo } from "@/config/portfolio";
 import { Mail } from "lucide-react";
 import Link from "next/link";
 import { GitHubIcon, LinkedInIcon, MediumIcon } from "@/components/ui/SocialIcons";
+import { CurrentYear } from "@/components/CurrentYear";
 
 export function Footer() {
-  const year = new Date().getFullYear();
   const socialLinks = personalInfo.socialLinks;
 
   const iconMap: Record<string, React.ElementType> = {
@@ -52,7 +52,7 @@ export function Footer() {
         </div>
 
         <p className="text-xs text-muted-foreground">
-          © {year} {personalInfo.name}. All rights reserved.
+          © <CurrentYear /> {personalInfo.name}. All rights reserved.
         </p>
       </div>
     </footer>
