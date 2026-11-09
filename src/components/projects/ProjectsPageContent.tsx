@@ -6,7 +6,10 @@ import {
   PROJECTS_SUBTITLE,
   formatProjectMeta,
 } from "@/components/projects/projectsCopy";
-import { ProjectThumbLiveBadge } from "@/components/projects/ProjectThumbLiveBadge";
+import {
+  ProjectThumbCornerBadge,
+  projectThumbBadge,
+} from "@/components/projects/ProjectThumbCornerBadge";
 import { cn } from "@/lib/utils";
 
 function projectHref(
@@ -15,16 +18,25 @@ function projectHref(
   if (project.links.live) {
     return { href: project.links.live, external: true };
   }
+  if (project.links.github) {
+    return { href: project.links.github, external: true };
+  }
   return null;
 }
 
 function ProjectRow({ project }: { project: Project }) {
   const link = projectHref(project);
+  const thumbBadge = projectThumbBadge(project);
 
   const content = (
     <>
       <div className="relative aspect-[16/10] w-full max-w-[280px] shrink-0 overflow-hidden rounded-md border border-dashed border-border bg-muted/20 sm:max-w-[320px] md:max-w-[360px]">
-        {project.status === "live" ? <ProjectThumbLiveBadge /> : null}
+        {thumbBadge ? (
+          <ProjectThumbCornerBadge
+            variant={thumbBadge.variant}
+            label={thumbBadge.label}
+          />
+        ) : null}
         {project.image ? (
           <Image
             src={project.image}
@@ -105,9 +117,18 @@ export function ProjectsPageContent() {
         </header>
 
         <div className="divide-y divide-dashed divide-border border-b border-dashed border-border">
-          {projects.map((project) => (
-            <ProjectRow key={project.id} project={project} />
-          ))}
+          {[...projects]
+            .sort((a, b) => {
+              if (a.contribution !== b.contribution) {
+                return a.contribution === "individual" ? -1 : 1;
+              }
+              if (a.id === "agent-swarm-ui") return -1;
+              if (b.id === "agent-swarm-ui") return 1;
+              return 0;
+            })
+            .map((project) => (
+              <ProjectRow key={project.id} project={project} />
+            ))}
         </div>
       </div>
     </section>

@@ -12,5 +12,9 @@ export function projectContributionLabel(
 }
 
 export function formatProjectMeta(project: Project): string {
-  return `${PROJECTS_EMPLOYER} · ${projectContributionLabel(project.contribution)}`;
+  const label = projectContributionLabel(project.contribution);
+  if (project.contribution === "individual") {
+    return project.employer ? `${project.employer} · ${label}` : label;
+  }
+  return `${PROJECTS_EMPLOYER} · ${label}`;
 }

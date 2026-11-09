@@ -30,6 +30,10 @@ import {
   type HomeBuildView,
 } from "@/components/home/HomeBuildContext";
 import { homeBuildShellView } from "@/components/home/homeBuildShell";
+import {
+  hasSeenHomeBuild,
+  markHomeBuildSeen,
+} from "@/components/home/homeBuildStorage";
 
 type HomeAgentBuildProps = {
   children: ReactNode;
@@ -129,6 +133,12 @@ export function HomeAgentBuild({
 
   useEffect(() => setMounted(true), []);
 
+  useLayoutEffect(() => {
+    if (hasSeenHomeBuild()) {
+      setPhase("complete");
+    }
+  }, []);
+
   const building = phase === "building";
   const swarm = useHomeSwarm(building, anchors);
 
@@ -137,6 +147,11 @@ export function HomeAgentBuild({
       setPhase("complete");
     }
   }, [building, swarm.ready]);
+
+  useEffect(() => {
+    if (phase !== "complete" || hasSeenHomeBuild()) return;
+    markHomeBuildSeen();
+  }, [phase]);
 
   useEffect(() => {
     if (swarm.reducedMotion) {

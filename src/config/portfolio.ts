@@ -49,6 +49,8 @@ export type Project = {
   };
   status: "live" | "open-source" | "archived";
   contribution: "professional" | "individual";
+  /** Shown in meta for individual work tied to an employer (e.g. solo delivery at Zeto). */
+  employer?: string;
   image?: string;
 };
 
@@ -167,6 +169,7 @@ export const projects: Project[] = [
     image: "/images/projects/call-the-doctor-hero.png",
     status: "live",
     contribution: "individual",
+    employer: "Zeto Studio",
   },
   {
     id: "ops-ai",
@@ -185,6 +188,25 @@ export const projects: Project[] = [
     image: "/images/projects/ops-ai-hero.png",
     status: "live",
     contribution: "professional",
+  },
+  {
+    id: "agent-swarm-ui",
+    title: "Agent Swarm UI",
+    category: "Agent Orchestration UI",
+    description:
+      "An independent open-source UI for visualizing and driving multi-agent swarms, plus the agent skill that powers Agent Swarm UI workflows in Cursor.",
+    achievements: [
+      "Building the Agent Swarm UI repository and companion agent skill end to end.",
+      "Designing interaction patterns for swarm coordination, task handoff, and live build feedback.",
+      "Open-sourcing the project under the MIT license on GitHub.",
+    ],
+    technologies: ["TypeScript", "React.js", "Next.js", "Tailwind CSS"],
+    links: {
+      github: "https://github.com/ChilivereRithvik/agent-swarm-ui",
+    },
+    status: "open-source",
+    contribution: "individual",
+    image: "/images/projects/agent-swarm-ui-hero.jpg",
   },
 ];
 
