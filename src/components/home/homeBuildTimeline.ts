@@ -1,4 +1,10 @@
-import { personalInfo, type Blog, type Experience } from "@/config/portfolio";
+import {
+  HOME_INDIVIDUAL_PROJECT_IDS,
+  offTheClock,
+  personalInfo,
+  type Blog,
+  type Experience,
+} from "@/config/portfolio";
 import {
   easeOutCubic,
   type AnchorRect,
@@ -9,6 +15,8 @@ export const HERO_META_LINE = `${personalInfo.title} · ${personalInfo.location}
 export const TECH_HEADING = "Tech Stack";
 export const EXPERIENCE_HEADING = "Experience";
 export const WRITINGS_HEADING = "Writings";
+export const INDIVIDUAL_HEADING = "Individual";
+export const OFF_CLOCK_HEADING = offTheClock.title;
 
 const HERO_TYPE_CHAR_TOTAL =
   HERO_HEADING.length + HERO_META_LINE.length;
@@ -63,9 +71,13 @@ export type HomeAgentId =
   | "experience-layout"
   | "experience-entries"
   | "experience-content"
+  | "individual-layout"
+  | "individual-cards"
   | "writings-layout"
   | "writings-cards"
-  | "writings-content";
+  | "writings-content"
+  | "offclock-layout"
+  | "offclock-content";
 
 export type HomeAnchors = {
   nav: AnchorRect;
@@ -100,6 +112,13 @@ export type HomeAnchors = {
   experienceBodyTL: { x: number; y: number };
   experienceBodyBR: { x: number; y: number };
   experienceEntryRects: AnchorRect[];
+  individualSection: AnchorRect;
+  individualGrid: AnchorRect;
+  individualSectionTL: { x: number; y: number };
+  individualSectionBR: { x: number; y: number };
+  individualGridTL: { x: number; y: number };
+  individualGridBR: { x: number; y: number };
+  individualProjectCardRects: AnchorRect[];
   writingsSection: AnchorRect;
   writingsGrid: AnchorRect;
   writingsSectionTL: { x: number; y: number };
@@ -107,6 +126,12 @@ export type HomeAnchors = {
   writingsGridTL: { x: number; y: number };
   writingsGridBR: { x: number; y: number };
   writingsCardRects: AnchorRect[];
+  offClockSection: AnchorRect;
+  offClockBody: AnchorRect;
+  offClockSectionTL: { x: number; y: number };
+  offClockSectionBR: { x: number; y: number };
+  offClockBodyTL: { x: number; y: number };
+  offClockBodyBR: { x: number; y: number };
 };
 
 export type WritingsCardPreview = {
@@ -153,6 +178,17 @@ export function frameForExperienceStaggerAgent(
   return frameForStaggerRects(
     anchors.experienceEntryRects,
     anchors.experienceBody,
+    linearP
+  );
+}
+
+export function frameForIndividualStaggerAgent(
+  anchors: HomeAnchors,
+  linearP: number
+) {
+  return frameForStaggerRects(
+    anchors.individualProjectCardRects,
+    anchors.individualGrid,
     linearP
   );
 }
@@ -313,6 +349,20 @@ function writingCardCursor(
   );
 }
 
+function individualProjectCursor(
+  anchors: HomeAnchors,
+  progress: number,
+  linearT: number
+) {
+  return staggerEntryCursor(
+    anchors.individualProjectCardRects,
+    anchors.individualGridTL,
+    anchors.individualGridBR,
+    progress,
+    linearT
+  );
+}
+
 const HOME_AGENT_ORDER: HomeAgentId[] = [
   "nav-layout",
   "hero-shell",
@@ -324,9 +374,13 @@ const HOME_AGENT_ORDER: HomeAgentId[] = [
   "experience-layout",
   "experience-entries",
   "experience-content",
+  "individual-layout",
+  "individual-cards",
   "writings-layout",
   "writings-cards",
   "writings-content",
+  "offclock-layout",
+  "offclock-content",
 ];
 
 export const HOME_AGENT_META: Record<
@@ -404,25 +458,53 @@ export const HOME_AGENT_META: Record<
     durationMs: 980,
     exitMs: 120,
   },
+  "individual-layout": {
+    label: "Side",
+    color: "#2dd4bf",
+    startMs: 4390,
+    durationMs: 420,
+    exitMs: 120,
+  },
+  "individual-cards": {
+    label: "Build",
+    color: "#14b8a6",
+    startMs: 4810,
+    durationMs: 620,
+    exitMs: 120,
+  },
   "writings-layout": {
     label: "Write",
     color: "#c084fc",
-    startMs: 4490,
+    startMs: 5460,
     durationMs: 400,
     exitMs: 120,
   },
   "writings-cards": {
     label: "Cards",
     color: "#a855f7",
-    startMs: 4890,
+    startMs: 5860,
     durationMs: 620,
     exitMs: 120,
   },
   "writings-content": {
     label: "Copy",
     color: "#e879f9",
-    startMs: 4890,
+    startMs: 5860,
     durationMs: 980,
+    exitMs: 120,
+  },
+  "offclock-layout": {
+    label: "Play",
+    color: "#fb7185",
+    startMs: 6850,
+    durationMs: 380,
+    exitMs: 120,
+  },
+  "offclock-content": {
+    label: "CoC",
+    color: "#f43f5e",
+    startMs: 7230,
+    durationMs: 520,
     exitMs: 120,
   },
 };
@@ -497,6 +579,12 @@ function idlePoint(id: HomeAgentId, anchors: HomeAnchors) {
       const pt = experienceEntryCursor(anchors, 0, 0);
       return { x: pt.x, y: pt.y };
     }
+    case "individual-layout":
+      return anchors.individualSectionTL;
+    case "individual-cards": {
+      const pt = individualProjectCursor(anchors, 0, 0);
+      return { x: pt.x, y: pt.y };
+    }
     case "writings-layout":
       return anchors.writingsSectionTL;
     case "writings-cards":
@@ -504,6 +592,13 @@ function idlePoint(id: HomeAgentId, anchors: HomeAnchors) {
       const pt = writingCardCursor(anchors, 0, 0);
       return { x: pt.x, y: pt.y };
     }
+    case "offclock-layout":
+      return anchors.offClockSectionTL;
+    case "offclock-content":
+      return {
+        x: (anchors.offClockBodyTL.x + anchors.offClockBodyBR.x) / 2,
+        y: (anchors.offClockBodyTL.y + anchors.offClockBodyBR.y) / 2,
+      };
     default:
       return anchors.navTL;
   }
@@ -577,6 +672,13 @@ function workPath(
       return experienceEntryCursor(anchors, linearT, t);
     case "experience-content":
       return experienceEntryCursor(anchors, linearT, t);
+    case "individual-layout":
+      return {
+        x: lerp(anchors.individualSectionTL.x, anchors.individualSectionBR.x, t),
+        y: lerp(anchors.individualSectionTL.y, anchors.individualSectionBR.y, t),
+      };
+    case "individual-cards":
+      return individualProjectCursor(anchors, linearT, t);
     case "writings-layout":
       return {
         x: lerp(anchors.writingsSectionTL.x, anchors.writingsSectionBR.x, t),
@@ -586,6 +688,16 @@ function workPath(
       return writingCardCursor(anchors, linearT, t);
     case "writings-content":
       return writingCardCursor(anchors, linearT, t);
+    case "offclock-layout":
+      return {
+        x: lerp(anchors.offClockSectionTL.x, anchors.offClockSectionBR.x, t),
+        y: lerp(anchors.offClockSectionTL.y, anchors.offClockSectionBR.y, t),
+      };
+    case "offclock-content":
+      return {
+        x: lerp(anchors.offClockBodyTL.x, anchors.offClockBodyBR.x, t),
+        y: lerp(anchors.offClockBodyTL.y, anchors.offClockBodyBR.y, t),
+      };
     default:
       return anchors.navTL;
   }
@@ -702,6 +814,10 @@ export function deriveHomeContentAt(
       techPillCount: techCount,
       showTechSection: true,
       showExperienceSection: true,
+      showIndividualSection: true,
+      showIndividualCards: true,
+      showOffClockSection: true,
+      showOffClockContent: true,
       showWritingsSection: true,
       showWritingsCards: true,
       showWritingsContent: true,
@@ -710,16 +826,26 @@ export function deriveHomeContentAt(
       experienceEntryPreviews: deriveExperienceEntryPreviews(1, experiences),
       writingsCardPreviews: deriveWritingsCardPreviews(1, blogs),
       typedExperienceHeading: EXPERIENCE_HEADING,
+      typedIndividualHeading: INDIVIDUAL_HEADING,
       typedWritingsHeading: WRITINGS_HEADING,
+      typedOffClockHeading: OFF_CLOCK_HEADING,
       experienceLayoutP: 1,
       experienceEntriesP: 1,
       experienceContentP: 1,
+      individualLayoutP: 1,
+      individualCardsP: 1,
+      offClockLayoutP: 1,
+      offClockContentP: 1,
       writingsLayoutP: 1,
       writingsCardsP: 1,
       writingsContentP: 1,
       experienceLayoutReveal: 1,
       experienceEntriesReveal: 1,
       experienceContentReveal: 1,
+      individualLayoutReveal: 1,
+      individualCardsReveal: 1,
+      offClockLayoutReveal: 1,
+      offClockContentReveal: 1,
       writingsLayoutReveal: 1,
       writingsCardsReveal: 1,
       writingsContentReveal: 1,
@@ -744,6 +870,10 @@ export function deriveHomeContentAt(
   const experienceLayoutP = taskProgress(elapsedMs, "experience-layout");
   const experienceEntriesP = taskProgress(elapsedMs, "experience-entries");
   const experienceContentP = taskProgress(elapsedMs, "experience-content");
+  const individualLayoutP = taskProgress(elapsedMs, "individual-layout");
+  const individualCardsP = taskProgress(elapsedMs, "individual-cards");
+  const offClockLayoutP = taskProgress(elapsedMs, "offclock-layout");
+  const offClockContentP = taskProgress(elapsedMs, "offclock-content");
   const writingsLayoutP = taskProgress(elapsedMs, "writings-layout");
   const writingsCardsP = taskProgress(elapsedMs, "writings-cards");
   const writingsContentP = taskProgress(elapsedMs, "writings-content");
@@ -761,6 +891,13 @@ export function deriveHomeContentAt(
           0,
           Math.floor(experienceLayoutP * EXPERIENCE_HEADING.length)
         );
+  const typedIndividualHeading =
+    individualLayoutP <= 0
+      ? ""
+      : INDIVIDUAL_HEADING.slice(
+          0,
+          Math.floor(individualLayoutP * INDIVIDUAL_HEADING.length)
+        );
   const typedWritingsHeading =
     writingsLayoutP <= 0
       ? ""
@@ -768,10 +905,17 @@ export function deriveHomeContentAt(
           0,
           Math.floor(writingsLayoutP * WRITINGS_HEADING.length)
         );
+  const typedOffClockHeading =
+    offClockLayoutP <= 0
+      ? ""
+      : OFF_CLOCK_HEADING.slice(
+          0,
+          Math.floor(offClockLayoutP * OFF_CLOCK_HEADING.length)
+        );
 
   const buildDoneMs =
-    HOME_AGENT_META["writings-content"].startMs +
-    HOME_AGENT_META["writings-content"].durationMs;
+    HOME_AGENT_META["offclock-content"].startMs +
+    HOME_AGENT_META["offclock-content"].durationMs;
   const ready = elapsedMs >= buildDoneMs;
 
   return {
@@ -784,6 +928,10 @@ export function deriveHomeContentAt(
     experienceLayoutP,
     experienceEntriesP,
     experienceContentP,
+    individualLayoutP,
+    individualCardsP,
+    offClockLayoutP,
+    offClockContentP,
     writingsLayoutP,
     writingsCardsP,
     writingsContentP,
@@ -803,6 +951,10 @@ export function deriveHomeContentAt(
     experienceLayoutReveal: experienceLayoutP,
     experienceEntriesReveal: experienceEntriesP,
     experienceContentReveal: experienceContentP,
+    individualLayoutReveal: individualLayoutP,
+    individualCardsReveal: individualCardsP,
+    offClockLayoutReveal: offClockLayoutP,
+    offClockContentReveal: offClockContentP,
     writingsLayoutReveal: writingsLayoutP,
     writingsCardsReveal: writingsCardsP,
     writingsContentReveal: writingsContentP,
@@ -820,10 +972,18 @@ export function deriveHomeContentAt(
     showExperienceContent: experienceContentP > 0,
     typedExperienceHeading:
       experienceLayoutP >= 1 ? EXPERIENCE_HEADING : typedExperienceHeading,
+    typedIndividualHeading:
+      individualLayoutP >= 1 ? INDIVIDUAL_HEADING : typedIndividualHeading,
     typedWritingsHeading:
       writingsLayoutP >= 1 ? WRITINGS_HEADING : typedWritingsHeading,
+    typedOffClockHeading:
+      offClockLayoutP >= 1 ? OFF_CLOCK_HEADING : typedOffClockHeading,
     showTechSection: techLayoutP > 0,
     showExperienceSection: experienceLayoutP > 0,
+    showIndividualSection: individualLayoutP > 0,
+    showIndividualCards: individualCardsP > 0,
+    showOffClockSection: offClockLayoutP > 0,
+    showOffClockContent: offClockContentP > 0,
     showWritingsSection: writingsLayoutP > 0,
     showWritingsCards: writingsCardsP > 0,
     showWritingsContent: writingsContentP > 0,

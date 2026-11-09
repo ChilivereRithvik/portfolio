@@ -15,6 +15,8 @@ export type HomeBuildView = {
   typedTechHeading: string;
   typedExperienceHeading: string;
   typedWritingsHeading: string;
+  typedIndividualHeading: string;
+  typedOffClockHeading: string;
   experienceEntryPreviews: ExperienceEntryPreview[];
   writingsCardPreviews: WritingsCardPreview[];
   showHeroImage: boolean;
@@ -25,6 +27,10 @@ export type HomeBuildView = {
   showExperienceSection: boolean;
   showExperienceEntries: boolean;
   showExperienceContent: boolean;
+  showIndividualSection: boolean;
+  showIndividualCards: boolean;
+  showOffClockSection: boolean;
+  showOffClockContent: boolean;
   showWritingsSection: boolean;
   showWritingsCards: boolean;
   showWritingsContent: boolean;
@@ -40,6 +46,10 @@ export type HomeBuildView = {
   experienceLayoutP: number;
   experienceEntriesP: number;
   experienceContentP: number;
+  individualLayoutP: number;
+  individualCardsP: number;
+  offClockLayoutP: number;
+  offClockContentP: number;
   writingsLayoutP: number;
   writingsCardsP: number;
   writingsContentP: number;
@@ -52,6 +62,10 @@ export type HomeBuildView = {
   experienceLayoutReveal: number;
   experienceEntriesReveal: number;
   experienceContentReveal: number;
+  individualLayoutReveal: number;
+  individualCardsReveal: number;
+  offClockLayoutReveal: number;
+  offClockContentReveal: number;
   writingsLayoutReveal: number;
   writingsCardsReveal: number;
   writingsContentReveal: number;
@@ -66,6 +80,8 @@ const defaultView: HomeBuildView = {
   typedTechHeading: "",
   typedExperienceHeading: "",
   typedWritingsHeading: "",
+  typedIndividualHeading: "Individual",
+  typedOffClockHeading: "Off The Clock",
   experienceEntryPreviews: [],
   writingsCardPreviews: [],
   showHeroImage: true,
@@ -76,6 +92,10 @@ const defaultView: HomeBuildView = {
   showExperienceSection: true,
   showExperienceEntries: true,
   showExperienceContent: true,
+  showIndividualSection: true,
+  showIndividualCards: true,
+  showOffClockSection: true,
+  showOffClockContent: true,
   showWritingsSection: true,
   showWritingsCards: true,
   showWritingsContent: true,
@@ -91,6 +111,10 @@ const defaultView: HomeBuildView = {
   experienceLayoutP: 1,
   experienceEntriesP: 1,
   experienceContentP: 1,
+  individualLayoutP: 1,
+  individualCardsP: 1,
+  offClockLayoutP: 1,
+  offClockContentP: 1,
   writingsLayoutP: 1,
   writingsCardsP: 1,
   writingsContentP: 1,
@@ -103,6 +127,10 @@ const defaultView: HomeBuildView = {
   experienceLayoutReveal: 1,
   experienceEntriesReveal: 1,
   experienceContentReveal: 1,
+  individualLayoutReveal: 1,
+  individualCardsReveal: 1,
+  offClockLayoutReveal: 1,
+  offClockContentReveal: 1,
   writingsLayoutReveal: 1,
   writingsCardsReveal: 1,
   writingsContentReveal: 1,

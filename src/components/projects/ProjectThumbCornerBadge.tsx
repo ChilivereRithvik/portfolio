@@ -32,11 +32,16 @@ export function ProjectThumbCornerBadge({
   );
 }
 
+const BADGE_LABELS: Record<NonNullable<Project["badge"]>, string> = {
+  live: "Live",
+  development: "Development",
+};
+
 export function projectThumbBadge(
   project: Project
 ): { variant: "live" | "development"; label: string } | null {
-  if (project.id === "agent-swarm-ui") {
-    return { variant: "development", label: "Development" };
+  if (project.badge) {
+    return { variant: project.badge, label: BADGE_LABELS[project.badge] };
   }
   if (project.status === "live") {
     return { variant: "live", label: "Live" };

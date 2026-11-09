@@ -12,12 +12,18 @@ import { createPortal } from "react-dom";
 import { AgentCursor } from "@/components/welcome/AgentCursor";
 import { WelcomeSectionFrame } from "@/components/welcome/WelcomeSectionFrame";
 import { measureHomeAnchors } from "@/components/home/measureHomeAnchors";
-import { blogs, experiences, technologies } from "@/config/portfolio";
+import {
+  HOME_INDIVIDUAL_PROJECT_IDS,
+  blogs,
+  experiences,
+  technologies,
+} from "@/config/portfolio";
 import { useHomeSwarm } from "@/components/home/useHomeSwarm";
 import {
   deriveExperienceEntryPreviews,
   deriveWritingsCardPreviews,
   frameForExperienceStaggerAgent,
+  frameForIndividualStaggerAgent,
   frameForWritingsStaggerAgent,
   HOME_AGENT_META,
   motionProgress,
@@ -43,8 +49,12 @@ type HomeAgentBuildProps = {
   techPillsRef: React.RefObject<HTMLDivElement | null>;
   experienceSectionRef: React.RefObject<HTMLElement | null>;
   experienceBodyRef: React.RefObject<HTMLDivElement | null>;
+  individualSectionRef: React.RefObject<HTMLElement | null>;
+  individualGridRef: React.RefObject<HTMLDivElement | null>;
   writingsSectionRef: React.RefObject<HTMLElement | null>;
   writingsGridRef: React.RefObject<HTMLDivElement | null>;
+  offClockSectionRef: React.RefObject<HTMLElement | null>;
+  offClockBodyRef: React.RefObject<HTMLDivElement | null>;
 };
 
 function agent(
@@ -78,11 +88,19 @@ function frameForAgent(
     case "experience-entries":
     case "experience-content":
       return anchors.experienceBody;
+    case "individual-layout":
+      return anchors.individualSection;
+    case "individual-cards":
+      return anchors.individualGrid;
     case "writings-layout":
       return anchors.writingsSection;
     case "writings-cards":
     case "writings-content":
       return anchors.writingsGrid;
+    case "offclock-layout":
+      return anchors.offClockSection;
+    case "offclock-content":
+      return anchors.offClockBody;
     default:
       return anchors.nav;
   }
@@ -99,9 +117,13 @@ const OVERLAY_AGENTS: HomeAgentId[] = [
   "experience-layout",
   "experience-entries",
   "experience-content",
+  "individual-layout",
+  "individual-cards",
   "writings-layout",
   "writings-cards",
   "writings-content",
+  "offclock-layout",
+  "offclock-content",
 ];
 
 export function HomeAgentBuild({
@@ -116,8 +138,12 @@ export function HomeAgentBuild({
   techPillsRef,
   experienceSectionRef,
   experienceBodyRef,
+  individualSectionRef,
+  individualGridRef,
   writingsSectionRef,
   writingsGridRef,
+  offClockSectionRef,
+  offClockBodyRef,
 }: HomeAgentBuildProps) {
   const [phase, setPhase] = useState<"intro" | "building" | "complete">(
     "building"
@@ -125,7 +151,9 @@ export function HomeAgentBuild({
   const [anchors, setAnchors] = useState<HomeAnchors | null>(null);
   const [mounted, setMounted] = useState(false);
   const scrolledExperience = useRef(false);
+  const scrolledIndividual = useRef(false);
   const scrolledWritings = useRef(false);
+  const scrolledOffClock = useRef(false);
 
   useEffect(() => setMounted(true), []);
 
@@ -160,6 +188,18 @@ export function HomeAgentBuild({
     }
 
     if (
+      !scrolledIndividual.current &&
+      taskProgress(swarm.elapsedMs, "individual-layout") >= 0.12 &&
+      individualSectionRef.current
+    ) {
+      scrolledIndividual.current = true;
+      individualSectionRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+
+    if (
       !scrolledWritings.current &&
       taskProgress(swarm.elapsedMs, "writings-layout") >= 0.12 &&
       writingsSectionRef.current
@@ -170,12 +210,25 @@ export function HomeAgentBuild({
         block: "start",
       });
     }
+    if (
+      !scrolledOffClock.current &&
+      taskProgress(swarm.elapsedMs, "offclock-layout") >= 0.12 &&
+      offClockSectionRef.current
+    ) {
+      scrolledOffClock.current = true;
+      offClockSectionRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
   }, [
     phase,
     swarm.elapsedMs,
     swarm.reducedMotion,
     experienceSectionRef,
+    individualSectionRef,
     writingsSectionRef,
+    offClockSectionRef,
   ]);
 
   useLayoutEffect(() => {
@@ -222,12 +275,17 @@ export function HomeAgentBuild({
       techPillsRef.current,
       experienceSectionRef.current,
       experienceBodyRef.current,
+      individualSectionRef.current,
+      individualGridRef.current,
       writingsSectionRef.current,
       writingsGridRef.current,
+      offClockSectionRef.current,
+      offClockBodyRef.current,
       {
         stableOverlay: phase === "building",
         techCount: technologies.length,
         experienceCount: experiences.length,
+        individualCount: HOME_INDIVIDUAL_PROJECT_IDS.length,
         writingsCount: blogs.length,
       }
     );
@@ -244,8 +302,12 @@ export function HomeAgentBuild({
     techPillsRef,
     experienceSectionRef,
     experienceBodyRef,
+    individualSectionRef,
+    individualGridRef,
     writingsSectionRef,
     writingsGridRef,
+    offClockSectionRef,
+    offClockBodyRef,
   ]);
 
   useLayoutEffect(() => {
@@ -272,7 +334,9 @@ export function HomeAgentBuild({
     showHeroEmail: true,
     typedTechHeading: "Tech Stack",
     typedExperienceHeading: "Experience",
+    typedIndividualHeading: "Individual",
     typedWritingsHeading: "Writings",
+    typedOffClockHeading: "Off The Clock",
     showHeroImage: true,
     showHeroMeta: true,
     showHeroLinks: true,
@@ -281,6 +345,10 @@ export function HomeAgentBuild({
     writingsCardPreviews: deriveWritingsCardPreviews(1, blogs),
     showExperienceEntries: true,
     showExperienceContent: true,
+    showIndividualSection: true,
+    showIndividualCards: true,
+    showOffClockSection: true,
+    showOffClockContent: true,
     showTechSection: true,
     showExperienceSection: true,
     showWritingsSection: true,
@@ -298,6 +366,10 @@ export function HomeAgentBuild({
     experienceLayoutP: 1,
     experienceEntriesP: 1,
     experienceContentP: 1,
+    individualLayoutP: 1,
+    individualCardsP: 1,
+    offClockLayoutP: 1,
+    offClockContentP: 1,
     writingsLayoutP: 1,
     writingsCardsP: 1,
     writingsContentP: 1,
@@ -310,6 +382,10 @@ export function HomeAgentBuild({
     experienceLayoutReveal: 1,
     experienceEntriesReveal: 1,
     experienceContentReveal: 1,
+    individualLayoutReveal: 1,
+    individualCardsReveal: 1,
+    offClockLayoutReveal: 1,
+    offClockContentReveal: 1,
     writingsLayoutReveal: 1,
     writingsCardsReveal: 1,
     writingsContentReveal: 1,
@@ -328,7 +404,9 @@ export function HomeAgentBuild({
             showHeroEmail: swarm.showHeroEmail,
             typedTechHeading: swarm.typedTechHeading,
             typedExperienceHeading: swarm.typedExperienceHeading,
+            typedIndividualHeading: swarm.typedIndividualHeading,
             typedWritingsHeading: swarm.typedWritingsHeading,
+            typedOffClockHeading: swarm.typedOffClockHeading,
             showHeroImage: swarm.showHeroImage,
             showHeroMeta: swarm.showHeroMeta,
             showHeroLinks: swarm.showHeroLinks,
@@ -337,6 +415,10 @@ export function HomeAgentBuild({
             writingsCardPreviews: swarm.writingsCardPreviews,
             showExperienceEntries: swarm.showExperienceEntries,
             showExperienceContent: swarm.showExperienceContent,
+            showIndividualSection: swarm.showIndividualSection,
+            showIndividualCards: swarm.showIndividualCards,
+            showOffClockSection: swarm.showOffClockSection,
+            showOffClockContent: swarm.showOffClockContent,
             showTechSection: swarm.showTechSection,
             showExperienceSection: swarm.showExperienceSection,
             showWritingsSection: swarm.showWritingsSection,
@@ -354,6 +436,10 @@ export function HomeAgentBuild({
             experienceLayoutP: swarm.experienceLayoutP,
             experienceEntriesP: swarm.experienceEntriesP,
             experienceContentP: swarm.experienceContentP,
+            individualLayoutP: swarm.individualLayoutP,
+            individualCardsP: swarm.individualCardsP,
+            offClockLayoutP: swarm.offClockLayoutP,
+            offClockContentP: swarm.offClockContentP,
             writingsLayoutP: swarm.writingsLayoutP,
             writingsCardsP: swarm.writingsCardsP,
             writingsContentP: swarm.writingsContentP,
@@ -366,6 +452,10 @@ export function HomeAgentBuild({
             experienceLayoutReveal: swarm.experienceLayoutReveal,
             experienceEntriesReveal: swarm.experienceEntriesReveal,
             experienceContentReveal: swarm.experienceContentReveal,
+            individualLayoutReveal: swarm.individualLayoutReveal,
+            individualCardsReveal: swarm.individualCardsReveal,
+            offClockLayoutReveal: swarm.offClockLayoutReveal,
+            offClockContentReveal: swarm.offClockContentReveal,
             writingsLayoutReveal: swarm.writingsLayoutReveal,
             writingsCardsReveal: swarm.writingsCardsReveal,
             writingsContentReveal: swarm.writingsContentReveal,
@@ -393,6 +483,15 @@ export function HomeAgentBuild({
               return null;
             }
           }
+          if (id === "individual-layout") {
+            const cards = agent(swarm.agents, "individual-cards");
+            if (
+              cards?.working &&
+              taskProgress(swarm.elapsedMs, "individual-cards") < 1
+            ) {
+              return null;
+            }
+          }
           if (id === "writings-layout") {
             const cards = agent(swarm.agents, "writings-cards");
             if (
@@ -402,19 +501,26 @@ export function HomeAgentBuild({
               return null;
             }
           }
-          if (id === "writings-content" || id === "experience-content") {
+          if (
+            id === "writings-content" ||
+            id === "experience-content" ||
+            id === "offclock-content"
+          ) {
             return null;
           }
 
           const staggered =
             id === "experience-entries" ||
+            id === "individual-cards" ||
             id === "writings-cards";
           const stagger =
             id === "experience-entries"
               ? frameForExperienceStaggerAgent(anchors, linearP)
-              : staggered
-                ? frameForWritingsStaggerAgent(anchors, linearP)
-                : null;
+              : id === "individual-cards"
+                ? frameForIndividualStaggerAgent(anchors, linearP)
+                : staggered
+                  ? frameForWritingsStaggerAgent(anchors, linearP)
+                  : null;
           const rect = stagger ?? frameForAgent(id, anchors);
           const frameProgress = stagger ? stagger.progress : linearP;
 

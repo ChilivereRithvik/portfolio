@@ -52,6 +52,7 @@ export type Project = {
   /** Shown in meta for individual work tied to an employer (e.g. solo delivery at Zeto). */
   employer?: string;
   image?: string;
+  badge?: "live" | "development";
 };
 
 export const projects: Project[] = [
@@ -207,8 +208,67 @@ export const projects: Project[] = [
     status: "open-source",
     contribution: "individual",
     image: "/images/projects/agent-swarm-ui-hero.jpg",
+    badge: "development",
+  },
+  {
+    id: "telephony-voice-bot",
+    title: "Real-Time Telephony Voice Bot",
+    category: "Voice AI & Telephony",
+    description:
+      "Built a production-style voice agent that handles live phone calls over Twilio. Users pick Telugu, Hindi, English, or Gujarati via IVR; speech is transcribed, answered by an LLM, and spoken back with low-latency TTS. A Python orchestrator coordinates STT → context → LLM → TTS, with multilingual switching, circuit breakers, and integration tests.",
+    achievements: [
+      "Live Twilio call handling with IVR language selection (Telugu, Hindi, English, Gujarati).",
+      "Python orchestration pipeline: speech-to-text, conversational context, LLM replies, and text-to-speech.",
+      "Low-latency multilingual switching on active calls.",
+      "Circuit breakers and integration tests for production-style reliability.",
+    ],
+    technologies: [
+      "Python",
+      "Twilio",
+      "IVR",
+      "STT",
+      "TTS",
+      "LLM",
+    ],
+    links: {},
+    status: "open-source",
+    contribution: "individual",
+    badge: "development",
   },
 ];
+
+/** Side projects highlighted on the home page (below Experience). */
+export const HOME_INDIVIDUAL_PROJECT_IDS = [
+  "agent-swarm-ui",
+  "telephony-voice-bot",
+] as const;
+
+export type OffTheClockGame = {
+  name: string;
+  href: string;
+  detail: string;
+  playerName?: string;
+  playerTag?: string;
+  images?: string[];
+};
+
+export const offTheClock = {
+  title: "Off The Clock",
+  subtitle: "Mobile games I play to unwind.",
+  games: [
+    {
+      name: "Clash of Clans",
+      playerName: "Rithvik",
+      playerTag: "#GG0UUUYLV",
+      href: "https://www.clashofstats.com/players/rithvik-GG0UUUYLV/summary",
+      detail: "Village strategy & clan wars — view my Clash of Stats profile.",
+      images: [
+        "/images/off-the-clock/clash-of-clans-base.jpg",
+        "/images/off-the-clock/clash-of-clans-profile.jpg",
+      ],
+    },
+  ] satisfies OffTheClockGame[],
+};
 
 export type Experience = {
   id: string;

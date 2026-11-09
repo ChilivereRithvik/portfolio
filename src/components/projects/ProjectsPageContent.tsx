@@ -12,6 +12,19 @@ import {
 } from "@/components/projects/ProjectThumbCornerBadge";
 import { cn } from "@/lib/utils";
 
+/** Individual projects listed on /projects (after Agent Swarm UI). */
+const INDIVIDUAL_PROJECT_ORDER = [
+  "agent-swarm-ui",
+  "telephony-voice-bot",
+] as const;
+
+function individualSortRank(id: string): number {
+  const index = INDIVIDUAL_PROJECT_ORDER.indexOf(
+    id as (typeof INDIVIDUAL_PROJECT_ORDER)[number]
+  );
+  return index === -1 ? INDIVIDUAL_PROJECT_ORDER.length : index;
+}
+
 function projectHref(
   project: Project
 ): { href: string; external: true } | null {
@@ -122,8 +135,9 @@ export function ProjectsPageContent() {
               if (a.contribution !== b.contribution) {
                 return a.contribution === "individual" ? -1 : 1;
               }
-              if (a.id === "agent-swarm-ui") return -1;
-              if (b.id === "agent-swarm-ui") return 1;
+              if (a.contribution === "individual") {
+                return individualSortRank(a.id) - individualSortRank(b.id);
+              }
               return 0;
             })
             .map((project) => (

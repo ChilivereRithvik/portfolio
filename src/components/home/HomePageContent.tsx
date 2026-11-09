@@ -5,7 +5,9 @@ import { Hero } from "@/components/Hero";
 import { TechStack } from "@/components/TechStack";
 import { HomeAgentBuild } from "@/components/home/HomeAgentBuild";
 import { HomeExperience } from "@/components/home/HomeExperience";
+import { HomeIndividualProjects } from "@/components/home/HomeIndividualProjects";
 import { HomeWritings } from "@/components/home/HomeWritings";
+import { HomeOffTheClock } from "@/components/home/HomeOffTheClock";
 import { blogs, experiences } from "@/config/portfolio";
 
 export function HomePageContent() {
@@ -19,8 +21,12 @@ export function HomePageContent() {
   const techPillsRef = useRef<HTMLDivElement>(null);
   const experienceSectionRef = useRef<HTMLElement>(null);
   const experienceBodyRef = useRef<HTMLDivElement>(null);
+  const individualSectionRef = useRef<HTMLElement>(null);
+  const individualGridRef = useRef<HTMLDivElement>(null);
   const writingsSectionRef = useRef<HTMLElement>(null);
   const writingsGridRef = useRef<HTMLDivElement>(null);
+  const offClockSectionRef = useRef<HTMLElement>(null);
+  const offClockBodyRef = useRef<HTMLDivElement>(null);
 
   return (
     <HomeAgentBuild
@@ -34,8 +40,12 @@ export function HomePageContent() {
       techPillsRef={techPillsRef}
       experienceSectionRef={experienceSectionRef}
       experienceBodyRef={experienceBodyRef}
+      individualSectionRef={individualSectionRef}
+      individualGridRef={individualGridRef}
       writingsSectionRef={writingsSectionRef}
       writingsGridRef={writingsGridRef}
+      offClockSectionRef={offClockSectionRef}
+      offClockBodyRef={offClockBodyRef}
     >
       <main className="pb-16">
         <div className="space-y-0">
@@ -59,10 +69,20 @@ export function HomePageContent() {
             experiences={experiences}
           />
 
+          <HomeIndividualProjects
+            sectionRef={individualSectionRef}
+            gridRef={individualGridRef}
+          />
+
           <HomeWritings
             sectionRef={writingsSectionRef}
             gridRef={writingsGridRef}
             blogs={blogs}
+          />
+
+          <HomeOffTheClock
+            sectionRef={offClockSectionRef}
+            bodyRef={offClockBodyRef}
           />
         </div>
       </main>

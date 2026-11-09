@@ -97,31 +97,128 @@ function estimateExperienceBlock(techSection: DOMRect, experienceCount: number) 
   return { section, body };
 }
 
-function estimateWritingsBlock(experienceSection: DOMRect, writingsCount: number) {
-  const top = experienceSection.bottom;
-  const width = experienceSection.width;
+function estimateIndividualBlock(
+  afterSection: DOMRect,
+  projectCount: number
+) {
+  const top = afterSection.bottom;
+  const width = afterSection.width;
+  const headerH = 100;
+  const cols = Math.min(2, projectCount);
+  const rows = Math.ceil(projectCount / cols);
+  const cardH = 320;
+  const gridH = rows * cardH + Math.max(0, rows - 1) * 24;
+  const sectionH = headerH + gridH + 80;
+  const section = {
+    left: afterSection.left,
+    top,
+    right: afterSection.right,
+    bottom: top + sectionH,
+    width,
+    height: sectionH,
+  } as DOMRect;
+  const grid = {
+    left: afterSection.left,
+    top: top + headerH,
+    right: afterSection.right,
+    bottom: top + headerH + gridH,
+    width,
+    height: gridH,
+  } as DOMRect;
+  return { section, grid };
+}
+
+function estimateWritingsBlock(afterSection: DOMRect, writingsCount: number) {
+  const top = afterSection.bottom;
+  const width = afterSection.width;
   const headerH = 120;
   const rowH = 220;
   const rows = Math.max(1, Math.ceil(writingsCount / 2));
   const gridH = rows * rowH;
   const sectionH = headerH + gridH;
   const section = {
-    left: experienceSection.left,
+    left: afterSection.left,
     top,
-    right: experienceSection.right,
+    right: afterSection.right,
     bottom: top + sectionH,
     width,
     height: sectionH,
   } as DOMRect;
   const grid = {
-    left: experienceSection.left,
+    left: afterSection.left,
     top: top + headerH,
-    right: experienceSection.right,
+    right: afterSection.right,
     bottom: top + headerH + gridH,
     width,
     height: gridH,
   } as DOMRect;
   return { section, grid };
+}
+
+function estimateOffClockBlock(afterSection: DOMRect) {
+  const top = afterSection.bottom;
+  const width = afterSection.width;
+  const headerH = 88;
+  const bodyH = 280;
+  const sectionH = headerH + bodyH + 80;
+  const section = {
+    left: afterSection.left,
+    top,
+    right: afterSection.right,
+    bottom: top + sectionH,
+    width,
+    height: sectionH,
+  } as DOMRect;
+  const body = {
+    left: afterSection.left,
+    top: top + headerH,
+    right: afterSection.right,
+    bottom: top + headerH + bodyH,
+    width,
+    height: bodyH,
+  } as DOMRect;
+  return { section, body };
+}
+
+function estimateIndividualCardRects(
+  grid: DOMRect,
+  count: number
+): AnchorRect[] {
+  const cols = Math.min(2, count);
+  const rows = Math.max(1, Math.ceil(count / cols));
+  const cardW = grid.width / cols;
+  const cardH = grid.height / rows;
+  return Array.from({ length: count }, (_, i) => {
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    return {
+      x: grid.left + col * cardW,
+      y: grid.top + row * cardH,
+      w: cardW,
+      h: cardH,
+    };
+  });
+}
+
+function measureIndividualCardRects(
+  gridEl: HTMLElement | null,
+  stable: boolean,
+  count: number,
+  gridFallback: DOMRect
+): AnchorRect[] {
+  if (!gridEl) {
+    return estimateIndividualCardRects(gridFallback, count);
+  }
+  const cardEls = gridEl.querySelectorAll<HTMLElement>("[data-individual-project]");
+  if (!stable && cardEls.length > 0) {
+    return Array.from(cardEls).map((el) => {
+      const r = el.getBoundingClientRect();
+      return { x: r.left, y: r.top, w: r.width, h: r.height };
+    });
+  }
+  const grid =
+    gridEl.offsetHeight > 0 ? gridEl.getBoundingClientRect() : gridFallback;
+  return estimateIndividualCardRects(grid, count);
 }
 
 function estimateExperienceEntryRects(
@@ -209,6 +306,7 @@ type MeasureHomeAnchorsOptions = {
   stableOverlay?: boolean;
   techCount?: number;
   experienceCount?: number;
+  individualCount?: number;
   writingsCount?: number;
 };
 
@@ -253,8 +351,12 @@ export function measureHomeAnchors(
   techPills: HTMLElement | null,
   experienceSection: HTMLElement | null,
   experienceBody: HTMLElement | null,
+  individualSection: HTMLElement | null,
+  individualGrid: HTMLElement | null,
   writingsSection: HTMLElement | null,
   writingsGrid: HTMLElement | null,
+  offClockSection: HTMLElement | null,
+  offClockBody: HTMLElement | null,
   options?: MeasureHomeAnchorsOptions
 ): HomeAnchors | null {
   if (!nav || !heroShell || !heroPhoto || !heroTitle) {
@@ -268,6 +370,7 @@ export function measureHomeAnchors(
 
   const techCount = options?.techCount ?? 1;
   const experienceCount = options?.experienceCount ?? 2;
+  const individualCount = options?.individualCount ?? 2;
   const writingsCount = options?.writingsCount ?? 2;
   const techEst = estimateTechBlock(shell, techCount);
   const stable = options?.stableOverlay ?? false;
@@ -325,7 +428,17 @@ export function measureHomeAnchors(
       ? expEst.body
       : experienceBody.getBoundingClientRect();
 
-  const writEst = estimateWritingsBlock(experience, writingsCount);
+  const indEst = estimateIndividualBlock(experience, individualCount);
+  const individual =
+    stable || !individualSection || individualSection.offsetHeight <= 0
+      ? indEst.section
+      : individualSection.getBoundingClientRect();
+  const individualCards =
+    stable || !individualGrid || individualGrid.offsetHeight <= 0
+      ? indEst.grid
+      : individualGrid.getBoundingClientRect();
+
+  const writEst = estimateWritingsBlock(individual, writingsCount);
   const writings =
     stable || !writingsSection || writingsSection.offsetHeight <= 0
       ? writEst.section
@@ -334,6 +447,16 @@ export function measureHomeAnchors(
     stable || !writingsGrid || writingsGrid.offsetHeight <= 0
       ? writEst.grid
       : writingsGrid.getBoundingClientRect();
+
+  const offEst = estimateOffClockBlock(writings);
+  const offClock =
+    stable || !offClockSection || offClockSection.offsetHeight <= 0
+      ? offEst.section
+      : offClockSection.getBoundingClientRect();
+  const offClockContent =
+    stable || !offClockBody || offClockBody.offsetHeight <= 0
+      ? offEst.body
+      : offClockBody.getBoundingClientRect();
 
   return {
     nav: toViewportRect(navBox),
@@ -388,5 +511,23 @@ export function measureHomeAnchors(
       experienceCount,
       experienceContent
     ),
+    individualSection: toViewportRect(individual),
+    individualGrid: toViewportRect(individualCards),
+    individualSectionTL: point(individual.left + 8, individual.top + 8),
+    individualSectionBR: point(individual.right - 12, individual.bottom - 12),
+    individualGridTL: point(individualCards.left, individualCards.top),
+    individualGridBR: point(individualCards.right, individualCards.bottom),
+    individualProjectCardRects: measureIndividualCardRects(
+      individualGrid,
+      stable,
+      individualCount,
+      individualCards
+    ),
+    offClockSection: toViewportRect(offClock),
+    offClockBody: toViewportRect(offClockContent),
+    offClockSectionTL: point(offClock.left + 8, offClock.top + 8),
+    offClockSectionBR: point(offClock.right - 12, offClock.bottom - 12),
+    offClockBodyTL: point(offClockContent.left, offClockContent.top),
+    offClockBodyBR: point(offClockContent.right, offClockContent.bottom),
   };
 }
