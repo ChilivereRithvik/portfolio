@@ -5,6 +5,7 @@ import {
   useCallback,
   useEffect,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -27,6 +28,7 @@ import {
   frameForWritingsStaggerAgent,
   HOME_AGENT_META,
   motionProgress,
+  shiftHomeAnchorsForScroll,
   taskProgress,
   type HomeAgentId,
   type HomeAnchors,
@@ -149,21 +151,38 @@ export function HomeAgentBuild({
     "building"
   );
   const [anchors, setAnchors] = useState<HomeAnchors | null>(null);
+  const [scrollY, setScrollY] = useState(0);
   const [mounted, setMounted] = useState(false);
+  const anchorScrollBaselineRef = useRef(0);
+  const scrolledExperience = useRef(false);
+  const scrolledIndividual = useRef(false);
+  const scrolledWritings = useRef(false);
+  const scrolledOffClock = useRef(false);
+  const didInitialScrollTopRef = useRef(false);
 
   useEffect(() => setMounted(true), []);
 
   useLayoutEffect(() => {
+    if (didInitialScrollTopRef.current) return;
+    didInitialScrollTopRef.current = true;
     const prev = history.scrollRestoration;
     history.scrollRestoration = "manual";
     window.scrollTo(0, 0);
+    anchorScrollBaselineRef.current = 0;
     return () => {
       history.scrollRestoration = prev;
     };
   }, []);
 
   const building = phase === "building";
-  const swarm = useHomeSwarm(building, anchors);
+
+  const viewportAnchors = useMemo(() => {
+    if (!anchors) return null;
+    const delta = scrollY - anchorScrollBaselineRef.current;
+    return shiftHomeAnchorsForScroll(anchors, delta);
+  }, [anchors, scrollY]);
+
+  const swarm = useHomeSwarm(building, viewportAnchors);
 
   useEffect(() => {
     if (building && swarm.ready) {
@@ -176,6 +195,54 @@ export function HomeAgentBuild({
       setPhase("complete");
     }
   }, [swarm.reducedMotion]);
+
+  useEffect(() => {
+    if (phase !== "building" || swarm.reducedMotion) return;
+
+    const scrollToSection = (
+      ref: React.RefObject<HTMLElement | null>,
+      scrolled: React.MutableRefObject<boolean>,
+      layoutId: HomeAgentId
+    ) => {
+      if (
+        !scrolled.current &&
+        taskProgress(swarm.elapsedMs, layoutId) >= 1 &&
+        ref.current
+      ) {
+        scrolled.current = true;
+        ref.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    };
+
+    scrollToSection(
+      experienceSectionRef,
+      scrolledExperience,
+      "experience-layout"
+    );
+    scrollToSection(
+      individualSectionRef,
+      scrolledIndividual,
+      "individual-layout"
+    );
+    scrollToSection(writingsSectionRef, scrolledWritings, "writings-layout");
+    scrollToSection(offClockSectionRef, scrolledOffClock, "offclock-layout");
+  }, [
+    phase,
+    swarm.elapsedMs,
+    swarm.reducedMotion,
+    experienceSectionRef,
+    individualSectionRef,
+    writingsSectionRef,
+    offClockSectionRef,
+  ]);
+
+  useEffect(() => {
+    if (phase !== "building") return;
+    const onScroll = () => setScrollY(window.scrollY);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [phase]);
 
   useLayoutEffect(() => {
     const active =
@@ -207,7 +274,7 @@ export function HomeAgentBuild({
     swarm.elapsedMs,
   ]);
 
-  const measure = useCallback(() => {
+  const measure = useCallback((opts?: { force?: boolean }) => {
     const nav = document.querySelector<HTMLElement>("[data-home-nav]");
     const next = measureHomeAnchors(
       nav,
@@ -235,7 +302,10 @@ export function HomeAgentBuild({
         writingsCount: blogs.length,
       }
     );
-    if (next) setAnchors(next);
+    if (!next) return;
+    if (phase === "building" && anchors && !opts?.force) return;
+    anchorScrollBaselineRef.current = window.scrollY;
+    setAnchors(next);
   }, [
     phase,
     heroShellRef,
@@ -254,6 +324,7 @@ export function HomeAgentBuild({
     writingsGridRef,
     offClockSectionRef,
     offClockBodyRef,
+    anchors,
   ]);
 
   useLayoutEffect(() => {
@@ -263,13 +334,9 @@ export function HomeAgentBuild({
 
   useEffect(() => {
     if (phase !== "building") return;
-    const onResize = () => measure();
+    const onResize = () => measure({ force: true });
     window.addEventListener("resize", onResize);
-    window.addEventListener("scroll", onResize, { passive: true });
-    return () => {
-      window.removeEventListener("resize", onResize);
-      window.removeEventListener("scroll", onResize);
-    };
+    return () => window.removeEventListener("resize", onResize);
   }, [phase, measure]);
 
   const completeView: HomeBuildView = {
@@ -410,7 +477,7 @@ export function HomeAgentBuild({
   const showOverlay = phase === "building" && !swarm.ready && !swarm.reducedMotion;
 
   const overlay =
-    showOverlay && anchors && mounted ? (
+    showOverlay && viewportAnchors && mounted ? (
       <div
         className="pointer-events-none fixed inset-0 z-[55] overflow-hidden"
         aria-hidden
@@ -461,13 +528,13 @@ export function HomeAgentBuild({
             id === "writings-cards";
           const stagger =
             id === "experience-entries"
-              ? frameForExperienceStaggerAgent(anchors, linearP)
+              ? frameForExperienceStaggerAgent(viewportAnchors, linearP)
               : id === "individual-cards"
-                ? frameForIndividualStaggerAgent(anchors, linearP)
+                ? frameForIndividualStaggerAgent(viewportAnchors, linearP)
                 : staggered
-                  ? frameForWritingsStaggerAgent(anchors, linearP)
+                  ? frameForWritingsStaggerAgent(viewportAnchors, linearP)
                   : null;
-          const rect = stagger ?? frameForAgent(id, anchors);
+          const rect = stagger ?? frameForAgent(id, viewportAnchors);
           const frameProgress = stagger ? stagger.progress : linearP;
 
           return (

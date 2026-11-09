@@ -134,6 +134,82 @@ export type HomeAnchors = {
   offClockBodyBR: { x: number; y: number };
 };
 
+function shiftPoint(p: { x: number; y: number }, dy: number) {
+  return { x: p.x, y: p.y - dy };
+}
+
+function shiftRect(r: AnchorRect, dy: number): AnchorRect {
+  return { x: r.x, y: r.y - dy, w: r.w, h: r.h };
+}
+
+/** Viewport-anchor snapshot taken at `baselineScrollY`; pass `window.scrollY - baseline`. */
+export function shiftHomeAnchorsForScroll(
+  anchors: HomeAnchors,
+  scrollDelta: number
+): HomeAnchors {
+  if (scrollDelta === 0) return anchors;
+  const s = (r: AnchorRect) => shiftRect(r, scrollDelta);
+  const p = (pt: { x: number; y: number }) => shiftPoint(pt, scrollDelta);
+  return {
+    nav: s(anchors.nav),
+    heroShell: s(anchors.heroShell),
+    heroPhoto: s(anchors.heroPhoto),
+    heroTitle: s(anchors.heroTitle),
+    heroLinks: s(anchors.heroLinks),
+    techSection: s(anchors.techSection),
+    techHeading: s(anchors.techHeading),
+    techPills: s(anchors.techPills),
+    navTL: p(anchors.navTL),
+    navBR: p(anchors.navBR),
+    heroShellTL: p(anchors.heroShellTL),
+    heroShellBR: p(anchors.heroShellBR),
+    heroPhotoTL: p(anchors.heroPhotoTL),
+    heroPhotoBR: p(anchors.heroPhotoBR),
+    heroTitleCaret: p(anchors.heroTitleCaret),
+    heroCopy: s(anchors.heroCopy),
+    heroMetaCaret: p(anchors.heroMetaCaret),
+    heroEmailTL: p(anchors.heroEmailTL),
+    heroEmailBR: p(anchors.heroEmailBR),
+    heroLinksTL: p(anchors.heroLinksTL),
+    heroLinksBR: p(anchors.heroLinksBR),
+    techSectionTL: p(anchors.techSectionTL),
+    techSectionBR: p(anchors.techSectionBR),
+    techPillsTL: p(anchors.techPillsTL),
+    techPillsBR: p(anchors.techPillsBR),
+    experienceSection: s(anchors.experienceSection),
+    experienceBody: s(anchors.experienceBody),
+    experienceSectionTL: p(anchors.experienceSectionTL),
+    experienceSectionBR: p(anchors.experienceSectionBR),
+    experienceBodyTL: p(anchors.experienceBodyTL),
+    experienceBodyBR: p(anchors.experienceBodyBR),
+    experienceEntryRects: anchors.experienceEntryRects.map((r) => shiftRect(r, scrollDelta)),
+    individualSection: s(anchors.individualSection),
+    individualGrid: s(anchors.individualGrid),
+    individualSectionTL: p(anchors.individualSectionTL),
+    individualSectionBR: p(anchors.individualSectionBR),
+    individualGridTL: p(anchors.individualGridTL),
+    individualGridBR: p(anchors.individualGridBR),
+    individualProjectCardRects: anchors.individualProjectCardRects.map((r) =>
+      shiftRect(r, scrollDelta)
+    ),
+    writingsSection: s(anchors.writingsSection),
+    writingsGrid: s(anchors.writingsGrid),
+    writingsSectionTL: p(anchors.writingsSectionTL),
+    writingsSectionBR: p(anchors.writingsSectionBR),
+    writingsGridTL: p(anchors.writingsGridTL),
+    writingsGridBR: p(anchors.writingsGridBR),
+    writingsCardRects: anchors.writingsCardRects.map((r) =>
+      shiftRect(r, scrollDelta)
+    ),
+    offClockSection: s(anchors.offClockSection),
+    offClockBody: s(anchors.offClockBody),
+    offClockSectionTL: p(anchors.offClockSectionTL),
+    offClockSectionBR: p(anchors.offClockSectionBR),
+    offClockBodyTL: p(anchors.offClockBodyTL),
+    offClockBodyBR: p(anchors.offClockBodyBR),
+  };
+}
+
 export type WritingsCardPreview = {
   title: string;
   excerpt: string;
