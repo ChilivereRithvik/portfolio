@@ -161,7 +161,7 @@ export function Hero({
     <section
       ref={sectionRef}
       className={cn(
-        "hero-surface -mx-4 border-b border-border home-build-animated",
+        "hero-surface border-b border-dashed border-border home-build-animated",
         building && shellOpacity < 0.02 && "border-b-transparent"
       )}
       style={{ opacity: shellOpacity }}
@@ -242,7 +242,7 @@ export function Hero({
       <div
         ref={linksRef}
         className={cn(
-          "grid min-h-[4.25rem] grid-cols-2 divide-x divide-y divide-border border-t border-border bg-[#0a0a0a] md:min-h-[4.5rem] md:grid-cols-4 md:divide-y-0 home-build-animated",
+          "grid min-h-[4.25rem] grid-cols-2 divide-x divide-y divide-dashed divide-border border-t border-dashed border-border bg-[#0a0a0a] md:min-h-[4.5rem] md:grid-cols-4 md:divide-y-0 home-build-animated",
           !linksInteractive && "pointer-events-none border-t-border",
           building && !linksInteractive && "opacity-0"
         )}

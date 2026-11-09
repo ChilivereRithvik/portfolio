@@ -45,13 +45,13 @@ export function TechStack({
       ref={sectionRef}
       aria-hidden={building && !sectionVisible ? true : undefined}
       className={cn(
-        "border-t border-border py-12 ease-out home-build-animated",
+        "border-t border-dashed border-border py-12 ease-out home-build-animated",
         build.phase !== "building" && "transition-opacity duration-500",
         building && !sectionVisible && "pointer-events-none"
       )}
       style={{ opacity: sectionOpacity }}
     >
-      <div className="space-y-6">
+      <div className="space-y-6 px-4 md:px-6">
         <div>
           <h2
             ref={headingRef}

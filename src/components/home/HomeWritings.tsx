@@ -40,15 +40,16 @@ export function HomeWritings({
       ref={sectionRef}
       aria-hidden={building && !visible ? true : undefined}
       className={cn(
-        "-mx-4 home-build-animated",
-        writingsBordersSettled && "border-t border-dashed border-border",
-        building && !visible && "pointer-events-none"
+        "home-build-animated",
+        "border-t border-dashed border-border",
+        building && !visible && "pointer-events-none border-transparent",
+        !writingsBordersSettled && building && "border-transparent"
       )}
       style={{ opacity: sectionOpacity }}
     >
       <div
         className={cn(
-          "flex items-center justify-between px-6 py-8",
+          "flex items-center justify-between px-4 py-8 md:px-6",
           writingsBordersSettled && "border-b border-dashed border-border"
         )}
       >

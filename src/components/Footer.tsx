@@ -15,8 +15,8 @@ export function Footer() {
   };
 
   return (
-    <footer className="border-t border-border py-8 mt-16">
-      <div className="text-center space-y-4">
+    <footer className="border-t border-dashed border-border py-8 mt-16">
+      <div className="space-y-4 px-4 text-center">
         <div>
           <p className="text-sm text-muted-foreground">
             {personalInfo.name}

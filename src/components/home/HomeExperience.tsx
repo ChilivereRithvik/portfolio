@@ -45,13 +45,12 @@ export function HomeExperience({
       id="experience"
       aria-hidden={building && !visible ? true : undefined}
       className={cn(
-        "py-12 home-build-animated",
-        build.phase === "complete" && "border-t border-border",
-        building && !visible && "pointer-events-none"
+        "border-t border-dashed border-border py-12 home-build-animated",
+        building && !visible && "pointer-events-none border-transparent",
       )}
       style={{ opacity: sectionOpacity }}
     >
-      <div className="space-y-8">
+      <div className="space-y-8 px-4 md:px-6">
         <div>
           <h2 className="min-h-[1.75rem] text-xl font-semibold text-foreground">
             {headingText}
