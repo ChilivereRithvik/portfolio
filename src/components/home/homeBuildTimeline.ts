@@ -587,6 +587,13 @@ export const HOME_AGENT_META: Record<
 
 const PREVIEW_MS = 280;
 
+/** Wall-clock stretch: 1.005 ≈ 0.5% slower; 1.5 = 50% slower. */
+export const HOME_SWARM_TIME_SCALE = 1.005;
+
+export function scaleHomeBuildElapsed(rawElapsedMs: number) {
+  return rawElapsedMs / HOME_SWARM_TIME_SCALE;
+}
+
 /** Per-item opacity aligned with a 0–1 UI agent progress (matches growing selection frame). */
 export function staggeredItemOpacity(
   uiP: number,

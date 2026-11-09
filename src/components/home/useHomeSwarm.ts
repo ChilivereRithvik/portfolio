@@ -6,6 +6,7 @@ import {
   computeHomeAgentsAt,
   deriveHomeContentAt,
   HERO_HEADING,
+  scaleHomeBuildElapsed,
   type HomeAnchors,
 } from "@/components/home/homeBuildTimeline";
 
@@ -60,16 +61,21 @@ export function useHomeSwarm(
     return () => cancelAnimationFrame(raf);
   }, [enabled, reducedMotion, anchorsReady]);
 
+  const buildElapsedMs = useMemo(
+    () => scaleHomeBuildElapsed(elapsedMs),
+    [elapsedMs]
+  );
+
   const content = useMemo(
     () =>
       deriveHomeContentAt(
-        elapsedMs,
+        buildElapsedMs,
         reducedMotion,
         technologies.length,
         experiences,
         blogs
       ),
-    [elapsedMs, reducedMotion]
+    [buildElapsedMs, reducedMotion]
   );
 
   const spawnCorner = useMemo(() => {
@@ -88,8 +94,8 @@ export function useHomeSwarm(
   }, [anchors?.heroShell.x, anchors?.heroShell.w]);
 
   const agents = useMemo(
-    () => computeHomeAgentsAt(elapsedMs, anchors, spawnCorner),
-    [elapsedMs, anchors, spawnCorner]
+    () => computeHomeAgentsAt(buildElapsedMs, anchors, spawnCorner),
+    [buildElapsedMs, anchors, spawnCorner]
   );
 
   const cursors = agents.filter((a) => a.visible);
@@ -101,7 +107,7 @@ export function useHomeSwarm(
     agents,
     cursors,
     reducedMotion,
-    elapsedMs,
+    elapsedMs: buildElapsedMs,
     heroTypeWorking,
     heroTitleFull: HERO_HEADING,
   };
