@@ -34,16 +34,16 @@ export function TechStack({
     build.phase === "complete"
       ? 1
       : build.showTechSection
-        ? build.techLayoutP
+        ? build.techLayoutReveal
         : 0;
   const subtitleOpacity =
-    build.phase === "complete" ? 1 : Math.min(1, build.techLayoutP);
+    build.phase === "complete" ? 1 : Math.min(1, build.techLayoutReveal);
 
   return (
     <section
       ref={sectionRef}
       className={cn(
-        "border-t border-border py-12",
+        "border-t border-border py-12 transition-opacity duration-500 ease-out",
         build.showTechSection || build.phase === "complete" ? "" : "hidden"
       )}
       style={{ opacity: sectionOpacity }}

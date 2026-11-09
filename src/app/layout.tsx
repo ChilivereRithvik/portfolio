@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Inter, Geist_Mono } from "next/font/google";
+import { AgentPointer } from "@/components/AgentPointer";
 import { Footer } from "@/components/Footer";
 import "./globals.css";
 
@@ -63,8 +64,12 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${geistMono.variable} min-h-screen bg-[#0a0a0a] text-white antialiased`}
       >
+        <AgentPointer />
         <div className="mx-auto max-w-4xl border-x border-dashed border-border px-4">
-          <header className="relative z-50 flex h-16 items-center justify-between border-b border-border bg-[#0a0a0a]">
+          <header
+            data-home-nav
+            className="relative z-50 flex h-16 items-center justify-between border-b border-border bg-[#0a0a0a]"
+          >
             <nav className="flex items-center space-x-6 text-sm">
               {navItems.map((item) => (
                 <Link

@@ -25,6 +25,8 @@ export function AgentCursor({
     <div
       className={cn(
         "welcome-agent-cursor pointer-events-none absolute left-0 top-0 z-[30] will-change-transform",
+        className?.includes("welcome-agent-cursor--viewport") &&
+          "fixed z-[200]",
         active && "welcome-agent-cursor--active",
         exiting && "welcome-agent-cursor--exiting",
         className

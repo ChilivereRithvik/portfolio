@@ -59,11 +59,13 @@ export function useHomeSwarm(enabled: boolean, anchors: HomeAnchors | null) {
     const w = typeof window !== "undefined" ? window.innerWidth : 1200;
     const h = typeof window !== "undefined" ? window.innerHeight : 800;
     const corners = [
-      { x: w * 0.08, y: h * 0.14 },
-      { x: w * 0.9, y: h * 0.12 },
-      { x: w * 0.1, y: h * 0.84 },
-      { x: w * 0.88, y: h * 0.5 },
-      { x: w * 0.12, y: h * 0.55 },
+      { x: w * 0.06, y: h * 0.05 },
+      { x: w * 0.92, y: h * 0.06 },
+      { x: w * 0.08, y: h * 0.22 },
+      { x: w * 0.9, y: h * 0.2 },
+      { x: w * 0.1, y: h * 0.42 },
+      { x: w * 0.88, y: h * 0.55 },
+      { x: w * 0.12, y: h * 0.72 },
     ];
     return (index: number) => corners[index] ?? corners[0];
   }, []);

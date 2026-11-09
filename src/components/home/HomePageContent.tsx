@@ -60,7 +60,8 @@ function LowerSections() {
 }
 
 export function HomePageContent() {
-  const heroSectionRef = useRef<HTMLElement>(null);
+  const heroShellRef = useRef<HTMLElement>(null);
+  const heroPhotoRef = useRef<HTMLDivElement>(null);
   const heroTitleRef = useRef<HTMLHeadingElement>(null);
   const heroLinksRef = useRef<HTMLDivElement>(null);
   const techSectionRef = useRef<HTMLElement>(null);
@@ -69,7 +70,8 @@ export function HomePageContent() {
 
   return (
     <HomeAgentBuild
-      heroSectionRef={heroSectionRef}
+      heroShellRef={heroShellRef}
+      heroPhotoRef={heroPhotoRef}
       heroTitleRef={heroTitleRef}
       heroLinksRef={heroLinksRef}
       techSectionRef={techSectionRef}
@@ -79,7 +81,8 @@ export function HomePageContent() {
       <main className="pb-16">
         <div className="space-y-0">
           <Hero
-            sectionRef={heroSectionRef}
+            sectionRef={heroShellRef}
+            photoRef={heroPhotoRef}
             titleRef={heroTitleRef}
             linksRef={heroLinksRef}
           />

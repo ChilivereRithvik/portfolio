@@ -112,15 +112,24 @@ body {
 }
 
 .welcome-section-frame {
-  transition: width 0.08s linear, height 0.08s linear;
+  transition:
+    width 0.14s cubic-bezier(0.22, 1, 0.36, 1),
+    height 0.14s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: width, height;
 }
 
 .welcome-agent-cursor {
-  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 0.1s linear;
+  will-change: transform;
 }
 
-.welcome-agent-cursor--instant {
-  transition: none !important;
+.welcome-agent-cursor--viewport {
+  transition: transform 0.06s linear;
+}
+
+html.agentic-pointer,
+html.agentic-pointer * {
+  cursor: none !important;
 }
 
 .welcome-agent-cursor--active .welcome-agent-cursor-label {
@@ -156,6 +165,11 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html.agentic-pointer,
+  html.agentic-pointer * {
+    cursor: auto !important;
+  }
+
   .welcome-agent-cursor {
     transition: none;
   }
