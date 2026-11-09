@@ -3,6 +3,9 @@
 import type { RefObject } from "react";
 import { technologies } from "@/config/portfolio";
 import { useHomeBuild } from "@/components/home/HomeBuildContext";
+import {
+  estimateTechPillsHeight,
+} from "@/components/home/measureHomeAnchors";
 import { TechIcon } from "@/lib/techIcons";
 import { cn } from "@/lib/utils";
 
@@ -18,10 +21,8 @@ export function TechStack({
   pillsRef,
 }: TechStackProps) {
   const build = useHomeBuild();
-  const visibleTech =
-    build.techPillCount >= technologies.length
-      ? technologies
-      : technologies.slice(0, build.techPillCount);
+  const building = build.phase === "building";
+  const pillsReserveH = estimateTechPillsHeight(technologies.length, 720);
 
   const headingText =
     build.phase === "complete"
@@ -30,21 +31,22 @@ export function TechStack({
         ? build.typedTechHeading || "\u00a0"
         : "Tech Stack";
 
+  const sectionVisible = build.showTechSection || build.phase === "complete";
   const sectionOpacity =
     build.phase === "complete"
       ? 1
-      : build.showTechSection
-        ? build.techLayoutReveal
+      : sectionVisible
+        ? Math.min(1, build.techLayoutReveal)
         : 0;
-  const subtitleOpacity =
-    build.phase === "complete" ? 1 : Math.min(1, build.techLayoutReveal);
 
   return (
     <section
       ref={sectionRef}
+      aria-hidden={building && !sectionVisible ? true : undefined}
       className={cn(
-        "border-t border-border py-12 transition-opacity duration-500 ease-out",
-        build.showTechSection || build.phase === "complete" ? "" : "hidden"
+        "border-t border-border py-12 ease-out home-build-animated",
+        build.phase !== "building" && "transition-opacity duration-500",
+        building && !sectionVisible && "pointer-events-none"
       )}
       style={{ opacity: sectionOpacity }}
     >
@@ -62,25 +64,50 @@ export function TechStack({
               opacity:
                 build.phase === "complete"
                   ? 1
-                  : build.techPillCount > 0
-                    ? subtitleOpacity
-                    : 0,
+                  : build.techLayoutP >= 1
+                    ? 1
+                    : build.techPillCount > 0
+                      ? Math.min(1, build.techUiReveal)
+                      : 0,
             }}
           >
             Tools I reach for day to day.
           </p>
         </div>
 
-        <div ref={pillsRef} className="flex min-h-[2rem] flex-wrap gap-2">
-          {visibleTech.map((tech) => (
-            <span
-              key={tech.name}
-              className="flex items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/90"
-            >
-              <TechIcon name={tech.name} />
-              {tech.name}
-            </span>
-          ))}
+        <div
+          ref={pillsRef}
+          className="flex min-h-[2rem] flex-wrap gap-2"
+          style={building ? { minHeight: pillsReserveH } : undefined}
+        >
+          {technologies.map((tech, index) => {
+              const revealed =
+                !building ||
+                build.techPillCount >= technologies.length ||
+                index < build.techPillCount;
+
+              return (
+                <span
+                  key={tech.name}
+                  className={cn(
+                    "flex items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/90 home-build-animated",
+                    building && !revealed && "pointer-events-none invisible"
+                  )}
+                  style={
+                    building
+                      ? {
+                          opacity: revealed
+                            ? Math.min(1, build.techUiReveal)
+                            : 0,
+                        }
+                      : undefined
+                  }
+                >
+                  <TechIcon name={tech.name} />
+                  {tech.name}
+                </span>
+              );
+            })}
         </div>
       </div>
     </section>

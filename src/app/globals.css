@@ -118,6 +118,28 @@ body {
   will-change: width, height;
 }
 
+/* Home agent build — hide chrome until agents reveal it; no CSS transitions on rAF-driven motion */
+html.home-build-active [data-home-nav] nav {
+  opacity: var(--home-nav-reveal, 0);
+  pointer-events: none;
+}
+
+html.home-build-active.home-build-nav-interactive [data-home-nav] nav {
+  pointer-events: auto;
+}
+
+html.home-build-active .welcome-section-frame {
+  transition: none;
+}
+
+html.home-build-active .welcome-agent-cursor:not(.welcome-agent-cursor--exiting) {
+  transition: none;
+}
+
+html.home-build-active .home-build-animated {
+  transition: none !important;
+}
+
 .welcome-agent-cursor {
   transition: transform 0.1s linear;
   will-change: transform;

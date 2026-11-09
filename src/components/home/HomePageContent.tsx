@@ -19,7 +19,9 @@ function LowerSections() {
   return (
   <div
     className={cn(
-      "transition-opacity duration-500",
+      "ease-out",
+      build.phase !== "building" && "transition-opacity duration-500",
+      build.phase === "building" && "home-build-animated",
       build.showLowerSections
         ? "opacity-100"
         : "pointer-events-none opacity-0"
@@ -63,6 +65,7 @@ export function HomePageContent() {
   const heroShellRef = useRef<HTMLElement>(null);
   const heroPhotoRef = useRef<HTMLDivElement>(null);
   const heroTitleRef = useRef<HTMLHeadingElement>(null);
+  const heroCopyRef = useRef<HTMLDivElement>(null);
   const heroLinksRef = useRef<HTMLDivElement>(null);
   const techSectionRef = useRef<HTMLElement>(null);
   const techHeadingRef = useRef<HTMLHeadingElement>(null);
@@ -73,6 +76,7 @@ export function HomePageContent() {
       heroShellRef={heroShellRef}
       heroPhotoRef={heroPhotoRef}
       heroTitleRef={heroTitleRef}
+      heroCopyRef={heroCopyRef}
       heroLinksRef={heroLinksRef}
       techSectionRef={techSectionRef}
       techHeadingRef={techHeadingRef}
@@ -84,6 +88,7 @@ export function HomePageContent() {
             sectionRef={heroShellRef}
             photoRef={heroPhotoRef}
             titleRef={heroTitleRef}
+            copyRef={heroCopyRef}
             linksRef={heroLinksRef}
           />
 

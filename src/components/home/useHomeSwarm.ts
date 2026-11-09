@@ -14,7 +14,10 @@ function prefersReducedMotion(): boolean {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-export function useHomeSwarm(enabled: boolean, anchors: HomeAnchors | null) {
+export function useHomeSwarm(
+  enabled: boolean,
+  anchors: HomeAnchors | null
+) {
   const [elapsedMs, setElapsedMs] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(prefersReducedMotion);
   const startRef = useRef<number | null>(null);

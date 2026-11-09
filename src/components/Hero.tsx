@@ -26,6 +26,7 @@ type HeroProps = {
   sectionRef: RefObject<HTMLElement | null>;
   photoRef: RefObject<HTMLDivElement | null>;
   titleRef: RefObject<HTMLHeadingElement | null>;
+  copyRef: RefObject<HTMLDivElement | null>;
   linksRef: RefObject<HTMLDivElement | null>;
 };
 
@@ -58,7 +59,13 @@ function HeroLinkCard({
   );
 }
 
-export function Hero({ sectionRef, photoRef, titleRef, linksRef }: HeroProps) {
+export function Hero({
+  sectionRef,
+  photoRef,
+  titleRef,
+  copyRef,
+  linksRef,
+}: HeroProps) {
   const build = useHomeBuild();
   const { profileImage, socialLinks, email, resumePath } = personalInfo;
 
@@ -115,28 +122,49 @@ export function Hero({ sectionRef, photoRef, titleRef, linksRef }: HeroProps) {
         ? build.typedHeroTitle || "\u00a0"
         : "\u00a0";
 
+  const heroTypingDone =
+    build.phase === "complete" ||
+    (build.typedHeroTitle.length >= build.heroTitleFull.length &&
+      build.typedHeroMeta.length >= build.heroMetaFull.length &&
+      build.showHeroEmail);
   const showTitleCaret =
     build.heroTypeWorking &&
+    !heroTypingDone &&
     build.typedHeroTitle.length < build.heroTitleFull.length;
+  const showMetaCaret =
+    build.heroTypeWorking &&
+    !heroTypingDone &&
+    build.typedHeroTitle.length >= build.heroTitleFull.length;
 
+  const building = build.phase === "building";
+  const shellOpacity =
+    build.phase === "complete" ? 1 : Math.min(1, build.heroShellReveal);
   const layoutOpacity =
-    build.phase === "complete" ? 1 : Math.min(1, build.heroLayoutReveal);
-  const metaOpacity =
     build.phase === "complete"
       ? 1
-      : build.heroTypeP >= 1
-        ? Math.min(1, build.heroUiP)
+      : build.heroShellP >= 1
+        ? Math.min(1, build.heroLayoutReveal)
         : 0;
+  const metaLineText =
+    build.phase === "complete"
+      ? `${personalInfo.title} · ${personalInfo.location}`
+      : build.typedHeroMeta || (build.showHeroMeta ? "\u00a0" : "");
   const linksOpacity =
-    build.phase === "complete" ? 1 : Math.min(1, build.heroUiP);
+    build.phase === "complete" ? 1 : Math.min(1, build.heroUiReveal);
 
   const showMeta = build.showHeroMeta || build.phase === "complete";
-  const showLinks = build.showHeroLinks || build.phase === "complete";
+  const showImage =
+    build.showHeroImage || build.phase === "complete" || building;
+  const linksInteractive = build.showHeroLinks || build.phase === "complete";
 
   return (
     <section
       ref={sectionRef}
-      className="hero-surface -mx-4 border-b border-border"
+      className={cn(
+        "hero-surface -mx-4 border-b border-border home-build-animated",
+        building && shellOpacity < 0.02 && "border-b-transparent"
+      )}
+      style={{ opacity: shellOpacity }}
     >
       <div className="grid grid-cols-1 items-center gap-6 px-4 py-8 md:grid-cols-12 md:gap-8 md:px-6 md:py-10">
         <div className="flex justify-center md:col-span-4 md:justify-center">
@@ -144,18 +172,21 @@ export function Hero({ sectionRef, photoRef, titleRef, linksRef }: HeroProps) {
             ref={photoRef}
             className="relative aspect-square w-full max-w-[200px] overflow-hidden rounded-2xl md:max-w-[240px]"
           >
-            {profileImage ? (
+            {profileImage && showImage ? (
               <Image
                 src={profileImage}
                 alt={personalInfo.name}
                 fill
                 sizes="(max-width: 768px) 200px, 240px"
-                className="object-cover transition-opacity duration-500 ease-out"
+                className={cn(
+                  "object-cover ease-out",
+                  build.phase !== "building" && "transition-opacity duration-500"
+                )}
                 style={{ opacity: layoutOpacity }}
                 unoptimized
                 priority
               />
-            ) : (
+            ) : profileImage ? null : (
               <div className="flex h-full w-full items-center justify-center bg-muted/30 text-5xl font-bold text-muted-foreground/50">
                 {personalInfo.displayName.slice(0, 2).toUpperCase()}
               </div>
@@ -163,12 +194,15 @@ export function Hero({ sectionRef, photoRef, titleRef, linksRef }: HeroProps) {
           </div>
         </div>
 
-        <div className="flex flex-col justify-center gap-3 md:col-span-8 md:pr-2">
+        <div
+          ref={copyRef}
+          className="flex flex-col justify-center gap-3 md:col-span-8 md:pr-2"
+        >
           <h1
             ref={titleRef}
             className={cn(
               "text-2xl font-bold tracking-tight text-white sm:text-3xl md:text-4xl",
-              build.phase === "building" ? "min-h-[1.2em]" : "min-h-[2.5rem]"
+              building ? "min-h-[2.75rem] sm:min-h-[3.25rem] md:min-h-[3.5rem]" : "min-h-[2.5rem]"
             )}
           >
             {titleText}
@@ -176,33 +210,62 @@ export function Hero({ sectionRef, photoRef, titleRef, linksRef }: HeroProps) {
               <span className="welcome-type-caret ml-0.5 inline-block h-[1.1em] w-0.5 translate-y-0.5 bg-white align-middle" />
             ) : null}
           </h1>
-          {showMeta ? (
-            <div
-              className="space-y-3"
-              style={{ opacity: metaOpacity }}
+          <div
+            className={cn(
+              "min-h-[5.5rem] space-y-3",
+              building && !showMeta && "pointer-events-none opacity-0"
+            )}
+            aria-hidden={building && !showMeta ? true : undefined}
+          >
+            <p
+              data-hero-meta
+              className="min-h-[1.25rem] text-sm text-white/80 md:text-base"
             >
-              <p className="text-sm text-white/80 md:text-base">
-                {personalInfo.title} · {personalInfo.location}
-              </p>
+              {metaLineText}
+              {showMetaCaret ? (
+                <span className="welcome-type-caret ml-0.5 inline-block h-[1em] w-0.5 translate-y-0.5 bg-white align-middle" />
+              ) : null}
+            </p>
+            <div
+              data-hero-email
+              className={cn(
+                "home-build-animated",
+                building && !build.showHeroEmail && "pointer-events-none opacity-0"
+              )}
+            >
               <EmailCopyBadge email={email} />
             </div>
-          ) : null}
+          </div>
         </div>
       </div>
 
       <div
         ref={linksRef}
         className={cn(
-          "grid min-h-[4.25rem] grid-cols-2 divide-x divide-y divide-border border-t border-border bg-[#0a0a0a] md:min-h-[4.5rem] md:grid-cols-4 md:divide-y-0",
-          !showLinks && "pointer-events-none opacity-0 max-h-0 min-h-0 overflow-hidden border-t-0"
+          "grid min-h-[4.25rem] grid-cols-2 divide-x divide-y divide-border border-t border-border bg-[#0a0a0a] md:min-h-[4.5rem] md:grid-cols-4 md:divide-y-0 home-build-animated",
+          !linksInteractive && "pointer-events-none border-t-border",
+          building && !linksInteractive && "opacity-0"
         )}
+        style={{
+          opacity:
+            build.phase === "complete"
+              ? 1
+              : linksInteractive
+                ? linksOpacity
+                : 0,
+        }}
       >
         {heroLinks.map((link) => (
           <HeroLinkCard
             key={link.name}
             {...link}
             style={{
-              opacity: build.phase === "complete" ? 1 : linksOpacity,
+              opacity:
+                build.phase === "complete"
+                  ? 1
+                  : linksInteractive
+                    ? linksOpacity
+                    : 0,
             }}
           />
         ))}

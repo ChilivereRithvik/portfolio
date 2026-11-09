@@ -11,6 +11,7 @@ import { createPortal } from "react-dom";
 import { AgentCursor } from "@/components/welcome/AgentCursor";
 import { WelcomeSectionFrame } from "@/components/welcome/WelcomeSectionFrame";
 import { measureHomeAnchors } from "@/components/home/measureHomeAnchors";
+import { technologies } from "@/config/portfolio";
 import { useHomeSwarm } from "@/components/home/useHomeSwarm";
 import {
   HOME_AGENT_META,
@@ -30,6 +31,7 @@ type HomeAgentBuildProps = {
   heroShellRef: React.RefObject<HTMLElement | null>;
   heroPhotoRef: React.RefObject<HTMLElement | null>;
   heroTitleRef: React.RefObject<HTMLHeadingElement | null>;
+  heroCopyRef: React.RefObject<HTMLDivElement | null>;
   heroLinksRef: React.RefObject<HTMLDivElement | null>;
   techSectionRef: React.RefObject<HTMLElement | null>;
   techHeadingRef: React.RefObject<HTMLHeadingElement | null>;
@@ -55,7 +57,7 @@ function frameForAgent(
     case "hero-photo":
       return anchors.heroPhoto;
     case "hero-type":
-      return anchors.heroTitle;
+      return anchors.heroCopy;
     case "hero-links":
       return anchors.heroLinks;
     case "tech-layout":
@@ -82,6 +84,7 @@ export function HomeAgentBuild({
   heroShellRef,
   heroPhotoRef,
   heroTitleRef,
+  heroCopyRef,
   heroLinksRef,
   techSectionRef,
   techHeadingRef,
@@ -94,7 +97,7 @@ export function HomeAgentBuild({
   useEffect(() => setMounted(true), []);
 
   const building = phase === "building";
-  const swarm = useHomeSwarm(building && Boolean(anchors), anchors);
+  const swarm = useHomeSwarm(building, anchors);
 
   useEffect(() => {
     if (building && swarm.ready) {
@@ -108,12 +111,35 @@ export function HomeAgentBuild({
     }
   }, [swarm.reducedMotion]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const active =
-      phase === "building" && !swarm.ready && !swarm.reducedMotion && Boolean(anchors);
-    document.documentElement.classList.toggle("home-build-active", active);
-    return () => document.documentElement.classList.remove("home-build-active");
-  }, [phase, swarm.ready, swarm.reducedMotion, anchors]);
+      phase === "building" && !swarm.ready && !swarm.reducedMotion;
+    const root = document.documentElement;
+    root.classList.toggle("home-build-active", active);
+    if (active) {
+      const navReveal = anchors
+        ? motionProgress(swarm.elapsedMs, "nav-layout")
+        : 0;
+      root.style.setProperty("--home-nav-reveal", String(navReveal));
+      root.classList.toggle(
+        "home-build-nav-interactive",
+        taskProgress(swarm.elapsedMs, "nav-layout") >= 1
+      );
+    } else {
+      root.style.removeProperty("--home-nav-reveal");
+      root.classList.remove("home-build-nav-interactive");
+    }
+    return () => {
+      root.classList.remove("home-build-active", "home-build-nav-interactive");
+      root.style.removeProperty("--home-nav-reveal");
+    };
+  }, [
+    phase,
+    swarm.ready,
+    swarm.reducedMotion,
+    anchors,
+    swarm.elapsedMs,
+  ]);
 
   const measure = useCallback(() => {
     const nav = document.querySelector<HTMLElement>("[data-home-nav]");
@@ -122,16 +148,20 @@ export function HomeAgentBuild({
       heroShellRef.current,
       heroPhotoRef.current,
       heroTitleRef.current,
+      heroCopyRef.current,
       heroLinksRef.current,
       techSectionRef.current,
       techHeadingRef.current,
-      techPillsRef.current
+      techPillsRef.current,
+      { stableOverlay: phase === "building", techCount: technologies.length }
     );
     if (next) setAnchors(next);
   }, [
+    phase,
     heroShellRef,
     heroPhotoRef,
     heroTitleRef,
+    heroCopyRef,
     heroLinksRef,
     techSectionRef,
     techHeadingRef,
@@ -154,24 +184,15 @@ export function HomeAgentBuild({
     };
   }, [phase, measure]);
 
-  useEffect(() => {
-    if (phase !== "building" || swarm.reducedMotion) return;
-    const id = requestAnimationFrame(() => measure());
-    return () => cancelAnimationFrame(id);
-  }, [
-    phase,
-    swarm.reducedMotion,
-    measure,
-    swarm.techPillCount,
-    swarm.showHeroLinks,
-    swarm.showHeroMeta,
-  ]);
 
   const buildView: HomeBuildView =
     phase === "complete" || swarm.reducedMotion
       ? {
           phase: "complete",
           typedHeroTitle: swarm.heroTitleFull,
+          typedHeroMeta: swarm.heroMetaFull ?? "",
+          heroMetaFull: swarm.heroMetaFull,
+          showHeroEmail: true,
           typedTechHeading: "Tech Stack",
           showHeroImage: true,
           showHeroMeta: true,
@@ -181,11 +202,13 @@ export function HomeAgentBuild({
           showLowerSections: true,
           heroTypeWorking: false,
           heroTitleFull: swarm.heroTitleFull,
+          heroShellP: 1,
           heroLayoutP: 1,
           heroTypeP: 1,
           heroUiP: 1,
           techLayoutP: 1,
           techUiP: 1,
+          heroShellReveal: 1,
           heroLayoutReveal: 1,
           heroTypeReveal: 1,
           heroUiReveal: 1,
@@ -197,6 +220,9 @@ export function HomeAgentBuild({
         : {
             phase: "building",
             typedHeroTitle: swarm.typedHeroTitle,
+            typedHeroMeta: swarm.typedHeroMeta,
+            heroMetaFull: swarm.heroMetaFull,
+            showHeroEmail: swarm.showHeroEmail,
             typedTechHeading: swarm.typedTechHeading,
             showHeroImage: swarm.showHeroImage,
             showHeroMeta: swarm.showHeroMeta,
@@ -206,11 +232,13 @@ export function HomeAgentBuild({
             showLowerSections: swarm.showLowerSections,
             heroTypeWorking: swarm.heroTypeWorking,
             heroTitleFull: swarm.heroTitleFull,
+            heroShellP: swarm.heroShellP,
             heroLayoutP: swarm.heroLayoutP,
             heroTypeP: swarm.heroTypeP,
             heroUiP: swarm.heroUiP,
             techLayoutP: swarm.techLayoutP,
             techUiP: swarm.techUiP,
+            heroShellReveal: swarm.heroShellReveal,
             heroLayoutReveal: swarm.heroLayoutReveal,
             heroTypeReveal: swarm.heroTypeReveal,
             heroUiReveal: swarm.heroUiReveal,
@@ -235,7 +263,7 @@ export function HomeAgentBuild({
               key={id}
               fixed
               rect={frameForAgent(id, anchors)}
-              progress={motionProgress(swarm.elapsedMs, id)}
+              progress={linearP}
               accentColor={HOME_AGENT_META[id].color}
             />
           );

@@ -5,7 +5,50 @@ import {
 } from "@/components/welcome/welcomeTaskTimeline";
 
 export const HERO_HEADING = `Hey Hi, I'm ${personalInfo.displayName}!`;
+export const HERO_META_LINE = `${personalInfo.title} · ${personalInfo.location}`;
 export const TECH_HEADING = "Tech Stack";
+
+const HERO_TYPE_CHAR_TOTAL =
+  HERO_HEADING.length + HERO_META_LINE.length;
+
+export function splitHeroTypeProgress(heroTypeP: number) {
+  if (heroTypeP <= 0) {
+    return {
+      typedHeroTitle: "",
+      typedHeroMeta: "",
+      showHeroEmail: false,
+      showHeroMetaBlock: false,
+    };
+  }
+  if (heroTypeP >= 1) {
+    return {
+      typedHeroTitle: HERO_HEADING,
+      typedHeroMeta: HERO_META_LINE,
+      showHeroEmail: true,
+      showHeroMetaBlock: true,
+    };
+  }
+
+  const typedCount = Math.floor(heroTypeP * HERO_TYPE_CHAR_TOTAL);
+  const showHeroMetaBlock = typedCount > HERO_HEADING.length;
+  const showHeroEmail = heroTypeP >= 0.93;
+
+  if (typedCount <= HERO_HEADING.length) {
+    return {
+      typedHeroTitle: HERO_HEADING.slice(0, typedCount),
+      typedHeroMeta: "",
+      showHeroEmail: false,
+      showHeroMetaBlock: false,
+    };
+  }
+
+  return {
+    typedHeroTitle: HERO_HEADING,
+    typedHeroMeta: HERO_META_LINE.slice(0, typedCount - HERO_HEADING.length),
+    showHeroEmail,
+    showHeroMetaBlock: true,
+  };
+}
 
 export type HomeAgentId =
   | "nav-layout"
@@ -32,6 +75,10 @@ export type HomeAnchors = {
   heroPhotoTL: { x: number; y: number };
   heroPhotoBR: { x: number; y: number };
   heroTitleCaret: { x: number; y: number };
+  heroCopy: AnchorRect;
+  heroMetaCaret: { x: number; y: number };
+  heroEmailTL: { x: number; y: number };
+  heroEmailBR: { x: number; y: number };
   heroLinksTL: { x: number; y: number };
   heroLinksBR: { x: number; y: number };
   techSectionTL: { x: number; y: number };
@@ -58,54 +105,54 @@ export const HOME_AGENT_META: Record<
     label: "Nav",
     color: "#94a3b8",
     startMs: 0,
-    durationMs: 1300,
-    exitMs: 380,
+    durationMs: 620,
+    exitMs: 180,
   },
   "hero-shell": {
     label: "Hero",
     color: "#38bdf8",
-    startMs: 850,
-    durationMs: 1350,
-    exitMs: 380,
+    startMs: 400,
+    durationMs: 640,
+    exitMs: 180,
   },
   "hero-photo": {
     label: "Photo",
     color: "#22d3ee",
-    startMs: 1750,
-    durationMs: 1500,
-    exitMs: 400,
+    startMs: 820,
+    durationMs: 720,
+    exitMs: 200,
   },
   "hero-type": {
     label: "Type",
     color: "#a78bfa",
-    startMs: 2950,
-    durationMs: 3100,
-    exitMs: 420,
+    startMs: 1380,
+    durationMs: 2100,
+    exitMs: 220,
   },
   "hero-links": {
     label: "Links",
     color: "#34d399",
-    startMs: 5750,
-    durationMs: 1400,
-    exitMs: 380,
+    startMs: 3320,
+    durationMs: 680,
+    exitMs: 180,
   },
   "tech-layout": {
     label: "Layout",
     color: "#fbbf24",
-    startMs: 7000,
-    durationMs: 1500,
-    exitMs: 380,
+    startMs: 4040,
+    durationMs: 720,
+    exitMs: 180,
   },
   "tech-ui": {
     label: "UI",
     color: "#f472b6",
-    startMs: 8300,
-    durationMs: 2600,
-    exitMs: 420,
+    startMs: 4780,
+    durationMs: 1200,
+    exitMs: 220,
   },
 };
 
-const PREVIEW_MS = 520;
+const PREVIEW_MS = 280;
 
 /** Linear 0–1 progress — keeps typing and pill reveals on a steady clock. */
 export function taskProgress(elapsedMs: number, id: HomeAgentId) {
@@ -181,10 +228,25 @@ function workPath(
         y: lerp(anchors.heroPhotoTL.y, anchors.heroPhotoBR.y, t),
       };
     case "hero-type": {
-      const drift = linearT * (anchors.heroTitle.w * 0.88);
+      const titleEnd = anchors.heroTitle.x + anchors.heroTitle.w * 0.92;
+      if (linearT < 0.42) {
+        const t = linearT / 0.42;
+        return {
+          x: lerp(anchors.heroTitle.x + 12, titleEnd, t),
+          y: anchors.heroTitleCaret.y,
+        };
+      }
+      if (linearT < 0.82) {
+        const t = (linearT - 0.42) / 0.4;
+        return {
+          x: lerp(anchors.heroTitle.x + 12, titleEnd * 0.92, t),
+          y: anchors.heroMetaCaret.y,
+        };
+      }
+      const t = (linearT - 0.82) / 0.18;
       return {
-        x: anchors.heroTitle.x + 12 + drift,
-        y: anchors.heroTitleCaret.y,
+        x: lerp(anchors.heroEmailTL.x, anchors.heroEmailBR.x, t),
+        y: anchors.heroEmailTL.y,
       };
     }
     case "hero-links":
@@ -297,12 +359,16 @@ export function deriveHomeContentAt(
 ) {
   if (reducedMotion) {
     return {
+      heroShellP: 1,
       heroLayoutP: 1,
       heroTypeP: 1,
       heroUiP: 1,
       techLayoutP: 1,
       techUiP: 1,
       typedHeroTitle: HERO_HEADING,
+      typedHeroMeta: HERO_META_LINE,
+      heroMetaFull: HERO_META_LINE,
+      showHeroEmail: true,
       typedTechHeading: TECH_HEADING,
       showHeroImage: true,
       showHeroMeta: true,
@@ -312,6 +378,7 @@ export function deriveHomeContentAt(
       showLowerSections: true,
       ready: true,
       heroTypeStarted: true,
+      heroShellReveal: 1,
       heroLayoutReveal: 1,
       heroTypeReveal: 1,
       heroUiReveal: 1,
@@ -320,16 +387,14 @@ export function deriveHomeContentAt(
     };
   }
 
+  const heroShellP = taskProgress(elapsedMs, "hero-shell");
   const heroPhotoP = taskProgress(elapsedMs, "hero-photo");
   const heroTypeP = taskProgress(elapsedMs, "hero-type");
   const heroLinksP = taskProgress(elapsedMs, "hero-links");
   const techLayoutP = taskProgress(elapsedMs, "tech-layout");
   const techUiP = taskProgress(elapsedMs, "tech-ui");
 
-  const typedHeroTitle =
-    heroTypeP <= 0
-      ? ""
-      : HERO_HEADING.slice(0, Math.floor(heroTypeP * HERO_HEADING.length));
+  const heroTyping = splitHeroTypeProgress(heroTypeP);
 
   const typedTechHeading =
     techLayoutP <= 0
@@ -341,20 +406,28 @@ export function deriveHomeContentAt(
   const ready = elapsedMs >= buildDoneMs;
 
   return {
+    heroShellP,
     heroLayoutP: heroPhotoP,
     heroTypeP,
     heroUiP: heroLinksP,
     techLayoutP,
     techUiP,
-    heroLayoutReveal: motionProgress(elapsedMs, "hero-photo"),
-    heroTypeReveal: motionProgress(elapsedMs, "hero-type"),
-    heroUiReveal: motionProgress(elapsedMs, "hero-links"),
-    techLayoutReveal: motionProgress(elapsedMs, "tech-layout"),
-    techUiReveal: motionProgress(elapsedMs, "tech-ui"),
-    typedHeroTitle: heroTypeP >= 1 ? HERO_HEADING : typedHeroTitle,
+    heroMetaFull: HERO_META_LINE,
+    /** Linear 0–1 — matched to overlay frames and task clocks (no extra easing). */
+    heroShellReveal: heroShellP,
+    heroLayoutReveal: heroPhotoP,
+    heroTypeReveal: heroTypeP,
+    heroUiReveal: heroLinksP,
+    techLayoutReveal: techLayoutP,
+    techUiReveal: techUiP,
+    typedHeroTitle:
+      heroTypeP >= 1 ? HERO_HEADING : heroTyping.typedHeroTitle,
+    typedHeroMeta:
+      heroTypeP >= 1 ? HERO_META_LINE : heroTyping.typedHeroMeta,
+    showHeroEmail: heroTyping.showHeroEmail,
     typedTechHeading: techLayoutP >= 1 ? TECH_HEADING : typedTechHeading,
-    showHeroImage: elapsedMs >= HOME_AGENT_META["hero-photo"].startMs - 200,
-    showHeroMeta: heroTypeP >= 1,
+    showHeroImage: elapsedMs >= HOME_AGENT_META["hero-photo"].startMs - 120,
+    showHeroMeta: heroTyping.showHeroMetaBlock,
     showHeroLinks: heroLinksP > 0,
     techPillCount: techUiP >= 1 ? techCount : Math.floor(techUiP * techCount),
     showTechSection: elapsedMs >= HOME_AGENT_META["tech-layout"].startMs,
