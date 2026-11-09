@@ -4,6 +4,7 @@ A developer portfolio built with Next.js 15, TypeScript, and Tailwind CSS, inspi
 
 ## Getting Started
 
+
 ```bash
 npm install
 npm run dev
