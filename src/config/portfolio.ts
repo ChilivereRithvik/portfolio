@@ -169,8 +169,7 @@ export const projects: Project[] = [
     },
     image: "/images/projects/call-the-doctor-hero.png",
     status: "live",
-    contribution: "individual",
-    employer: "Zeto Studio",
+    contribution: "professional",
   },
   {
     id: "ops-ai",
