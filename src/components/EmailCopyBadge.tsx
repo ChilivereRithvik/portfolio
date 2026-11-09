@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Copy } from "lucide-react";
+import { IoCheckmark, IoCopyOutline } from "react-icons/io5";
 import { GmailIcon } from "@/components/ui/SocialIcons";
 
 type EmailCopyBadgeProps = {
@@ -25,15 +25,15 @@ export function EmailCopyBadge({ email }: EmailCopyBadgeProps) {
     <button
       type="button"
       onClick={copyEmail}
-      className="inline-flex w-fit max-w-full items-center gap-2 rounded-full border border-border bg-background px-3 py-1.5 text-left text-xs text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+      className="inline-flex w-fit max-w-full items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-left text-xs text-white/90 transition-colors hover:bg-white/10 hover:text-white"
       aria-label={copied ? "Email copied" : "Copy email address"}
     >
       <GmailIcon className="h-4 w-4" />
-      <span className="truncate text-foreground">{email}</span>
+      <span className="truncate text-white">{email}</span>
       {copied ? (
-        <Check className="h-3.5 w-3.5 shrink-0 text-emerald-600" />
+        <IoCheckmark className="h-3.5 w-3.5 shrink-0 text-emerald-500" />
       ) : (
-        <Copy className="h-3.5 w-3.5 shrink-0 opacity-60" />
+        <IoCopyOutline className="h-3.5 w-3.5 shrink-0 opacity-60" />
       )}
     </button>
   );

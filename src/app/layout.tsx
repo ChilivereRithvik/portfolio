@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Inter, Geist_Mono } from "next/font/google";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { Footer } from "@/components/Footer";
 import "./globals.css";
 
@@ -48,41 +47,35 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" className="dark scroll-smooth">
       <head>
         <script
           dangerouslySetInnerHTML={{
             __html: `
               try {
-                const theme = localStorage.theme;
-                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                if (theme === 'dark' || (!theme && prefersDark)) {
-                  document.documentElement.classList.add('dark');
-                } else {
-                  document.documentElement.classList.remove('dark');
-                }
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
               } catch (_) {}
             `,
           }}
         />
       </head>
       <body
-        className={`${inter.variable} ${geistMono.variable} min-h-screen bg-background text-foreground antialiased`}
+        className={`${inter.variable} ${geistMono.variable} min-h-screen bg-[#0a0a0a] text-white antialiased`}
       >
         <div className="mx-auto max-w-4xl border-x border-dashed border-border px-4">
-          <header className="h-16 flex items-center justify-between border-b border-border">
+          <header className="relative z-50 flex h-16 items-center justify-between border-b border-border bg-[#0a0a0a]">
             <nav className="flex items-center space-x-6 text-sm">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-sm text-white/75 transition-colors hover:text-white"
                 >
                   {item.label}
                 </Link>
               ))}
             </nav>
-            <ThemeToggle />
           </header>
           {children}
           <Footer />
