@@ -67,7 +67,7 @@ export function Hero({
   linksRef,
 }: HeroProps) {
   const build = useHomeBuild();
-  const { profileImage, socialLinks, email, resumePath } = personalInfo;
+  const { profileImage, socialLinks, email } = personalInfo;
 
   const github = socialLinks.find((link) => link.icon === "github");
   const linkedin = socialLinks.find((link) => link.icon === "linkedin");
@@ -104,15 +104,11 @@ export function Hero({
           },
         ]
       : []),
-    ...(resumePath
-      ? [
-          {
-            name: "Resume",
-            href: resumePath,
-            icon: <HiOutlineDocumentText className="h-5 w-5 text-white" />,
-          },
-        ]
-      : []),
+    {
+      name: "Resume",
+      href: "/resume",
+      icon: <HiOutlineDocumentText className="h-5 w-5 text-white" />,
+    },
   ];
 
   const titleText =
