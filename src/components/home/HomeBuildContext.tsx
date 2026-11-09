@@ -7,7 +7,7 @@ import type {
 } from "@/components/home/homeBuildTimeline";
 
 export type HomeBuildView = {
-  phase: "idle" | "building" | "complete";
+  phase: "idle" | "intro" | "building" | "complete";
   typedHeroTitle: string;
   typedHeroMeta: string;
   heroMetaFull: string;

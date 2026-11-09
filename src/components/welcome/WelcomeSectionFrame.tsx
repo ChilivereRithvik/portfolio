@@ -8,6 +8,7 @@ type WelcomeSectionFrameProps = {
   accentColor?: string;
   /** Viewport-fixed vs overlay-local coordinates */
   fixed?: boolean;
+  showDimensions?: boolean;
 };
 
 export function WelcomeSectionFrame({
@@ -15,6 +16,7 @@ export function WelcomeSectionFrame({
   progress,
   accentColor = "#a3a3a3",
   fixed = false,
+  showDimensions = true,
 }: WelcomeSectionFrameProps) {
   if (progress <= 0) return null;
 
@@ -25,8 +27,8 @@ export function WelcomeSectionFrame({
     <div
       className={
         fixed
-          ? "welcome-section-frame pointer-events-none fixed z-[56] border-2 bg-black/20"
-          : "welcome-section-frame pointer-events-none absolute z-[6] border-2 bg-black/20"
+          ? "welcome-section-frame pointer-events-none fixed z-[56] border bg-black/20"
+          : "welcome-section-frame pointer-events-none absolute z-[6] border bg-black/20"
       }
       style={{
         left: rect.x,
@@ -34,11 +36,11 @@ export function WelcomeSectionFrame({
         width: w,
         height: h,
         borderColor: accentColor,
-        boxShadow: `0 0 24px ${accentColor}55, inset 0 0 0 1px ${accentColor}33`,
+        boxShadow: `0 0 20px ${accentColor}40`,
       }}
       aria-hidden
     >
-      {progress >= 0.35 ? (
+      {showDimensions && progress >= 0.35 ? (
         <span
           className="absolute -top-6 left-0 font-mono text-[10px] font-medium"
           style={{ color: accentColor }}

@@ -2,9 +2,8 @@
 
 import type { RefObject } from "react";
 import type { Experience } from "@/config/portfolio";
-import { ExperienceEntry } from "@/components/Experience";
+import { ExperienceEntry, ExperienceProjectList } from "@/components/Experience";
 import { useHomeBuild } from "@/components/home/HomeBuildContext";
-import { staggeredItemOpacity } from "@/components/home/homeBuildTimeline";
 import { cn } from "@/lib/utils";
 
 const EXP_HEADING = "Experience";
@@ -46,7 +45,8 @@ export function HomeExperience({
       id="experience"
       aria-hidden={building && !visible ? true : undefined}
       className={cn(
-        "border-t border-border py-12 home-build-animated",
+        "py-12 home-build-animated",
+        build.phase === "complete" && "border-t border-border",
         building && !visible && "pointer-events-none"
       )}
       style={{ opacity: sectionOpacity }}
@@ -67,19 +67,9 @@ export function HomeExperience({
           </p>
         </div>
 
-        <div ref={bodyRef} className="min-h-[28rem] space-y-0">
+        <div ref={bodyRef} className="min-h-[28rem] space-y-10">
           {experiences.map((exp, index) => {
             const preview = build.experienceEntryPreviews[index];
-            const borderAlpha =
-              building &&
-              build.showExperienceEntries &&
-              build.experienceEntriesP < 1
-                ? staggeredItemOpacity(
-                    build.experienceEntriesP,
-                    index,
-                    experiences.length
-                  )
-                : 0;
 
             const showContent =
               build.phase === "complete" || build.showExperienceContent;
@@ -90,8 +80,8 @@ export function HomeExperience({
                   key={exp.id}
                   data-experience-entry
                   className={cn(
-                    index > 0 && "border-t border-border pt-6",
-                    "home-build-animated"
+                    "home-build-animated",
+                    index > 0 && "border-t border-border pt-10"
                   )}
                 >
                   <ExperienceEntry experience={exp} />
@@ -104,26 +94,27 @@ export function HomeExperience({
                 key={exp.id}
                 data-experience-entry
                 className={cn(
-                  index > 0 && "border-t border-border pt-6",
-                  "home-build-animated relative min-h-[12rem] py-4"
+                  "home-build-animated relative min-h-[12rem]",
+                  index > 0 && "border-t border-transparent pt-10"
                 )}
                 style={{
                   opacity:
-                    showContent || borderAlpha > 0 ? 1 : 0,
-                  boxShadow:
-                    borderAlpha > 0
-                      ? `inset 0 0 0 1px rgba(96, 165, 250, ${borderAlpha})`
-                      : undefined,
+                    showContent ||
+                    (building &&
+                      build.showExperienceEntries &&
+                      build.experienceEntriesP > 0)
+                      ? 1
+                      : 0,
                 }}
               >
                 <div
                   className={cn(
-                    "space-y-4",
+                    "space-y-5",
                     building && !showContent && "pointer-events-none"
                   )}
                 >
-                  <div>
-                    <h3 className="min-h-[1.25rem] text-sm font-semibold text-foreground">
+                  <div className="space-y-2">
+                    <h3 className="min-h-[1.5rem] text-base font-semibold tracking-tight text-foreground">
                       {preview?.role || "\u00a0"}
                       {building &&
                       build.showExperienceContent &&
@@ -134,7 +125,7 @@ export function HomeExperience({
                       ) : null}
                     </h3>
                     <p
-                      className="mt-0.5 min-h-[1.25rem] text-sm text-muted-foreground"
+                      className="min-h-[1.25rem] text-sm text-muted-foreground"
                       style={{
                         opacity: preview?.companyLine ? 1 : 0,
                       }}
@@ -142,7 +133,7 @@ export function HomeExperience({
                       {preview?.companyLine || "\u00a0"}
                     </p>
                     <p
-                      className="mt-0.5 min-h-[1rem] text-xs text-muted-foreground"
+                      className="min-h-[1rem] text-xs tabular-nums text-muted-foreground sm:hidden"
                       style={{
                         opacity: preview?.duration ? 1 : 0,
                       }}
@@ -151,14 +142,12 @@ export function HomeExperience({
                     </p>
                   </div>
 
-                  <p className="min-h-[3rem] text-sm text-muted-foreground">
+                  <p className="min-h-[3rem] max-w-3xl text-sm leading-relaxed text-muted-foreground">
                     {preview?.description || "\u00a0"}
                   </p>
 
                   {preview?.showProjects ? (
-                    <div className="[&>div:first-child]:hidden [&>p]:hidden">
-                      <ExperienceEntry experience={exp} />
-                    </div>
+                    <ExperienceProjectList experience={exp} />
                   ) : null}
                 </div>
               </div>

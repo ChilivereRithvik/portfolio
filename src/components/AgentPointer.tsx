@@ -15,11 +15,16 @@ export function AgentPointer() {
   const [pos, setPos] = useState({ x: 0, y: 0 });
   const [visible, setVisible] = useState(false);
   const [pressing, setPressing] = useState(false);
-  const [buildActive, setBuildActive] = useState(false);
+  const [overlayActive, setOverlayActive] = useState(false);
 
   useEffect(() => {
-    const sync = () =>
-      setBuildActive(document.documentElement.classList.contains("home-build-active"));
+    const sync = () => {
+      const root = document.documentElement;
+      setOverlayActive(
+        root.classList.contains("home-build-active") ||
+          root.classList.contains("home-intro-active")
+      );
+    };
     sync();
     const obs = new MutationObserver(sync);
     obs.observe(document.documentElement, {
@@ -61,7 +66,7 @@ export function AgentPointer() {
     };
   }, []);
 
-  if (!enabled || !visible || buildActive) return null;
+  if (!enabled || !visible || overlayActive) return null;
 
   return (
     <AgentCursor

@@ -5,7 +5,6 @@ import Link from "next/link";
 import { ArrowUpRight, Clock } from "lucide-react";
 import type { Blog } from "@/config/portfolio";
 import { useHomeBuild } from "@/components/home/HomeBuildContext";
-import { staggeredItemOpacity } from "@/components/home/homeBuildTimeline";
 import { cn } from "@/lib/utils";
 
 type HomeWritingsProps = {
@@ -32,17 +31,27 @@ export function HomeWritings({
           ? 1
           : build.writingsLayoutReveal;
 
+  const writingsBordersSettled =
+    build.phase === "complete" ||
+    (building && build.writingsContentP >= 1);
+
   return (
     <section
       ref={sectionRef}
       aria-hidden={building && !visible ? true : undefined}
       className={cn(
-        "-mx-4 border-t border-dashed border-border home-build-animated",
+        "-mx-4 home-build-animated",
+        writingsBordersSettled && "border-t border-dashed border-border",
         building && !visible && "pointer-events-none"
       )}
       style={{ opacity: sectionOpacity }}
     >
-      <div className="flex items-center justify-between border-b border-dashed border-border px-6 py-8">
+      <div
+        className={cn(
+          "flex items-center justify-between px-6 py-8",
+          writingsBordersSettled && "border-b border-dashed border-border"
+        )}
+      >
         <div>
           <h2 className="min-h-[1.75rem] text-xl font-semibold text-foreground">
             {build.phase === "complete"
@@ -71,20 +80,14 @@ export function HomeWritings({
       </div>
       <div
         ref={gridRef}
-        className="grid min-h-[18rem] grid-cols-1 md:grid-cols-2 [&>*]:border-b [&>*]:border-dashed [&>*]:border-border md:[&>*:nth-child(odd)]:border-r"
+        className={cn(
+          "grid min-h-[18rem] grid-cols-1 md:grid-cols-2",
+          writingsBordersSettled &&
+            "[&>*]:border-b [&>*]:border-dashed [&>*]:border-border md:[&>*:nth-child(odd)]:border-r"
+        )}
       >
         {blogs.map((blog, index) => {
           const preview = build.writingsCardPreviews[index];
-          const borderAlpha =
-            building &&
-            build.showWritingsCards &&
-            build.writingsCardsP < 1
-              ? staggeredItemOpacity(
-                  build.writingsCardsP,
-                  index,
-                  blogs.length
-                )
-              : 0;
 
           const showContent = build.phase === "complete" || build.showWritingsContent;
           const title =
@@ -97,12 +100,6 @@ export function HomeWritings({
               key={blog.id}
               data-writing-card
               className="home-build-animated relative min-h-[14rem]"
-              style={{
-                boxShadow:
-                  borderAlpha > 0
-                    ? `inset 0 0 0 1px rgba(192, 132, 252, ${borderAlpha})`
-                    : undefined,
-              }}
             >
               <Link
                 href={blog.url}

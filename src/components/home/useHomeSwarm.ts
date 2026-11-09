@@ -37,6 +37,11 @@ export function useHomeSwarm(
       return;
     }
 
+    if (!anchors) {
+      setElapsedMs(0);
+      return;
+    }
+
     if (startRef.current === null) {
       startRef.current = performance.now();
     }
@@ -51,7 +56,7 @@ export function useHomeSwarm(
     raf = requestAnimationFrame(frame);
 
     return () => cancelAnimationFrame(raf);
-  }, [enabled, reducedMotion]);
+  }, [enabled, reducedMotion, anchors]);
 
   const content = useMemo(
     () =>

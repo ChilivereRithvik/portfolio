@@ -119,6 +119,19 @@ body {
 }
 
 /* Home agent build — hide chrome until agents reveal it; no CSS transitions on rAF-driven motion */
+html.home-intro-active [data-home-nav] nav {
+  opacity: 0;
+  pointer-events: none;
+}
+
+html.home-intro-active .welcome-section-frame {
+  transition: none;
+}
+
+html.home-intro-active .welcome-agent-cursor:not(.welcome-agent-cursor--exiting) {
+  transition: none;
+}
+
 html.home-build-active [data-home-nav] nav {
   opacity: var(--home-nav-reveal, 0);
   pointer-events: none;

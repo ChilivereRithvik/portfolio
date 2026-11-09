@@ -30,6 +30,7 @@ import {
   type HomeBuildView,
 } from "@/components/home/HomeBuildContext";
 import { homeBuildShellView } from "@/components/home/homeBuildShell";
+import { HomeWelcomeIntro } from "@/components/home/HomeWelcomeIntro";
 
 type HomeAgentBuildProps = {
   children: ReactNode;
@@ -119,7 +120,10 @@ export function HomeAgentBuild({
   writingsSectionRef,
   writingsGridRef,
 }: HomeAgentBuildProps) {
-  const [phase, setPhase] = useState<"building" | "complete">("building");
+  const [phase, setPhase] = useState<"intro" | "building" | "complete">(
+    "intro"
+  );
+  const [introExiting, setIntroExiting] = useState(false);
   const [anchors, setAnchors] = useState<HomeAnchors | null>(null);
   const [mounted, setMounted] = useState(false);
   const scrolledExperience = useRef(false);
@@ -129,6 +133,14 @@ export function HomeAgentBuild({
 
   const building = phase === "building";
   const swarm = useHomeSwarm(building, anchors);
+
+  const handleIntroReady = useCallback(() => {
+    setIntroExiting(true);
+    window.setTimeout(() => {
+      setIntroExiting(false);
+      setPhase("building");
+    }, 680);
+  }, []);
 
   useEffect(() => {
     if (building && swarm.ready) {
@@ -177,6 +189,15 @@ export function HomeAgentBuild({
   ]);
 
   useLayoutEffect(() => {
+    const root = document.documentElement;
+    root.classList.toggle(
+      "home-intro-active",
+      phase === "intro" || introExiting
+    );
+    return () => root.classList.remove("home-intro-active");
+  }, [phase, introExiting]);
+
+  useLayoutEffect(() => {
     const active =
       phase === "building" && !swarm.ready && !swarm.reducedMotion;
     const root = document.documentElement;
@@ -223,7 +244,7 @@ export function HomeAgentBuild({
       writingsSectionRef.current,
       writingsGridRef.current,
       {
-        stableOverlay: phase === "building",
+        stableOverlay: phase === "building" || phase === "intro",
         techCount: technologies.length,
         experienceCount: experiences.length,
         writingsCount: blogs.length,
@@ -247,12 +268,12 @@ export function HomeAgentBuild({
   ]);
 
   useLayoutEffect(() => {
-    if (phase !== "building") return;
+    if (phase === "complete") return;
     measure();
   }, [phase, measure]);
 
   useEffect(() => {
-    if (phase !== "building") return;
+    if (phase !== "building" && phase !== "intro") return;
     const onResize = () => measure();
     window.addEventListener("resize", onResize);
     window.addEventListener("scroll", onResize, { passive: true });
@@ -313,12 +334,19 @@ export function HomeAgentBuild({
     writingsContentReveal: 1,
   };
 
+  const introShell: HomeBuildView = {
+    ...homeBuildShellView(swarm.heroTitleFull),
+    phase: "intro",
+  };
+
   const buildView: HomeBuildView =
     phase === "complete" || swarm.reducedMotion
       ? completeView
-      : !anchors
-        ? homeBuildShellView(swarm.heroTitleFull)
-        : {
+      : phase === "intro"
+        ? introShell
+        : !anchors
+          ? homeBuildShellView(swarm.heroTitleFull)
+          : {
             phase: "building",
             typedHeroTitle: swarm.typedHeroTitle,
             typedHeroMeta: swarm.typedHeroMeta,
@@ -382,13 +410,33 @@ export function HomeAgentBuild({
           const linearP = taskProgress(swarm.elapsedMs, id);
           if (!a?.working || linearP >= 1) return null;
 
+          if (id === "experience-layout") {
+            const entries = agent(swarm.agents, "experience-entries");
+            if (
+              entries?.working &&
+              taskProgress(swarm.elapsedMs, "experience-entries") < 1
+            ) {
+              return null;
+            }
+          }
+          if (id === "writings-layout") {
+            const cards = agent(swarm.agents, "writings-cards");
+            if (
+              cards?.working &&
+              taskProgress(swarm.elapsedMs, "writings-cards") < 1
+            ) {
+              return null;
+            }
+          }
+          if (id === "writings-content" || id === "experience-content") {
+            return null;
+          }
+
           const staggered =
             id === "experience-entries" ||
-            id === "experience-content" ||
-            id === "writings-cards" ||
-            id === "writings-content";
+            id === "writings-cards";
           const stagger =
-            id === "experience-entries" || id === "experience-content"
+            id === "experience-entries"
               ? frameForExperienceStaggerAgent(anchors, linearP)
               : staggered
                 ? frameForWritingsStaggerAgent(anchors, linearP)
@@ -422,9 +470,31 @@ export function HomeAgentBuild({
       </div>
     ) : null;
 
+  const hideMain = phase === "intro" && !introExiting;
+
   return (
     <HomeBuildProvider value={buildView}>
-      {children}
+      <div
+        className={
+          hideMain
+            ? "pointer-events-none opacity-0"
+            : introExiting
+              ? "opacity-100 transition-opacity duration-500 ease-out"
+              : undefined
+        }
+        aria-hidden={hideMain ? true : undefined}
+      >
+        {children}
+      </div>
+
+      {!swarm.reducedMotion ? (
+        <HomeWelcomeIntro
+          active={phase === "intro"}
+          exiting={introExiting}
+          onReady={handleIntroReady}
+        />
+      ) : null}
+
       {overlay ? createPortal(overlay, document.body) : null}
 
       {building && !swarm.ready && !swarm.reducedMotion ? (
