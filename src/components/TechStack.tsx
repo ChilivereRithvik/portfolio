@@ -3,9 +3,8 @@
 import type { RefObject } from "react";
 import { technologies } from "@/config/portfolio";
 import { useHomeBuild } from "@/components/home/HomeBuildContext";
-import {
-  estimateTechPillsHeight,
-} from "@/components/home/measureHomeAnchors";
+import { estimateTechPillsHeight } from "@/components/home/measureHomeAnchors";
+import { staggeredItemOpacity } from "@/components/home/homeBuildTimeline";
 import { TechIcon } from "@/lib/techIcons";
 import { cn } from "@/lib/utils";
 
@@ -35,9 +34,11 @@ export function TechStack({
   const sectionOpacity =
     build.phase === "complete"
       ? 1
-      : sectionVisible
-        ? Math.min(1, build.techLayoutReveal)
-        : 0;
+      : !sectionVisible
+        ? 0
+        : build.techLayoutP >= 1
+          ? 1
+          : build.techLayoutReveal;
 
   return (
     <section
@@ -59,16 +60,9 @@ export function TechStack({
             {headingText}
           </h2>
           <p
-            className="mt-1 text-sm text-white/70"
+            className="mt-1 min-h-[1.25rem] text-sm text-white/70"
             style={{
-              opacity:
-                build.phase === "complete"
-                  ? 1
-                  : build.techLayoutP >= 1
-                    ? 1
-                    : build.techPillCount > 0
-                      ? Math.min(1, build.techUiReveal)
-                      : 0,
+              opacity: build.phase === "complete" ? 1 : build.techLayoutP,
             }}
           >
             Tools I reach for day to day.
@@ -77,37 +71,35 @@ export function TechStack({
 
         <div
           ref={pillsRef}
-          className="flex min-h-[2rem] flex-wrap gap-2"
-          style={building ? { minHeight: pillsReserveH } : undefined}
+          className="relative flex flex-wrap gap-2"
+          style={
+            building
+              ? { height: pillsReserveH, overflow: "hidden" }
+              : undefined
+          }
         >
-          {technologies.map((tech, index) => {
-              const revealed =
-                !building ||
-                build.techPillCount >= technologies.length ||
-                index < build.techPillCount;
-
-              return (
-                <span
-                  key={tech.name}
-                  className={cn(
-                    "flex items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/90 home-build-animated",
-                    building && !revealed && "pointer-events-none invisible"
-                  )}
-                  style={
-                    building
-                      ? {
-                          opacity: revealed
-                            ? Math.min(1, build.techUiReveal)
-                            : 0,
-                        }
-                      : undefined
-                  }
-                >
-                  <TechIcon name={tech.name} />
-                  {tech.name}
-                </span>
-              );
-            })}
+          {technologies.map((tech, index) => (
+              <span
+                key={tech.name}
+                className={cn(
+                  "flex items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/90 home-build-animated"
+                )}
+                style={
+                  building
+                    ? {
+                        opacity: staggeredItemOpacity(
+                          build.techUiP,
+                          index,
+                          technologies.length
+                        ),
+                      }
+                    : undefined
+                }
+              >
+                <TechIcon name={tech.name} />
+                {tech.name}
+              </span>
+          ))}
         </div>
       </div>
     </section>

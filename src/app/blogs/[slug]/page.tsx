@@ -62,7 +62,7 @@ export default function BlogPage({ params }: { params: Promise<{ slug: string }>
             <p className="text-xs text-muted-foreground">
               This article is hosted on{" "}
               <a
-                href="https://medium.com/@rithvik-zeto"
+                href="https://medium.com/@chiliveririthvik444"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline hover:text-foreground"

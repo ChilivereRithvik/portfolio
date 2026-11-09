@@ -315,23 +315,49 @@ export type Blog = {
 
 export const blogs: Blog[] = [
   {
+    id: "cron-vs-redis-notifications-vs-job-queues",
+    title:
+      "Cron vs Redis Notifications vs Job Queues: What Should You Actually Use?",
+    excerpt:
+      "While working on backend scheduling, how to trigger a job at the right time—and what happens when something goes wrong—with cron, Redis, and SQS.",
+    date: "2026-10-24",
+    readTime: "7 min read",
+    tags: ["Redis", "AWS Lambda", "AWS SQS", "Caching"],
+    url: "https://medium.com/@chiliveririthvik444/cron-vs-redis-notifications-vs-job-queues-what-should-you-actually-use-f481448c0337",
+  },
+  {
+    id: "secure-voice-agent-freeswitch-python",
+    title: "Building a Secure Voice Agent Architecture with FreeSWITCH and Python",
+    excerpt:
+      "How call routing, agent execution, tool calling, and security controls fit together in a real-time telephony system with dialplan, WebSockets, and rate limiting.",
+    date: "2026-10-24",
+    readTime: "12 min read",
+    tags: [
+      "FreeSWITCH",
+      "AI Agents",
+      "Distributed Systems",
+      "Backend",
+    ],
+    url: "https://medium.com/@chiliveririthvik444/building-a-secure-voice-agent-architecture-with-freeswitch-and-python-dbe61091f245",
+  },
+  {
     id: "automating-outbound-call-campaigns",
     title: "Automating Outbound Call Campaigns with Redis and Inngest",
     excerpt:
-      "A practical guide to building automated outbound call campaign architecture using Redis for call state management and Inngest for orchestration.",
-    date: "2025-10-01",
-    readTime: "5 min read",
-    tags: ["Inngest", "Redis", "Telecom", "Automation"],
+      "Automatically trigger outbound calls at the scheduled time without constantly checking every campaign or creating Redis keys far in advance.",
+    date: "2026-10-14",
+    readTime: "8 min read",
+    tags: ["Inngest", "Redis", "TypeScript", "AWS S3"],
     url: "https://medium.com/@chiliveririthvik444/automating-outbound-call-campaigns-with-redis-and-inngest-caa869bd950c",
   },
   {
     id: "calling-architecture-redis-inngest",
     title: "Building a Calling Architecture with Redis and Inngest",
     excerpt:
-      "Deep dive into designing a scalable calling architecture using Redis for real-time call state and Inngest for workflow orchestration.",
-    date: "2025-09-25",
-    readTime: "6 min read",
-    tags: ["Redis", "Inngest", "Architecture", "Telecom"],
+      "When building a calling system, handling the phone call is only one part—conversation data, call status, recordings, and post-call processing matter too.",
+    date: "2026-10-14",
+    readTime: "7 min read",
+    tags: ["Redis", "Inngest", "PostgreSQL", "FreeSWITCH"],
     url: "https://medium.com/@chiliveririthvik444/building-a-calling-architecture-with-redis-and-inngest-787e506a00cc",
   },
 ];

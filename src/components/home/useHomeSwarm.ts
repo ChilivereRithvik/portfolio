@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { technologies } from "@/config/portfolio";
+import { blogs, experiences, technologies } from "@/config/portfolio";
 import {
   computeHomeAgentsAt,
   deriveHomeContentAt,
@@ -54,7 +54,14 @@ export function useHomeSwarm(
   }, [enabled, reducedMotion]);
 
   const content = useMemo(
-    () => deriveHomeContentAt(elapsedMs, reducedMotion, technologies.length),
+    () =>
+      deriveHomeContentAt(
+        elapsedMs,
+        reducedMotion,
+        technologies.length,
+        experiences,
+        blogs
+      ),
     [elapsedMs, reducedMotion]
   );
 
@@ -69,6 +76,11 @@ export function useHomeSwarm(
       { x: w * 0.1, y: h * 0.42 },
       { x: w * 0.88, y: h * 0.55 },
       { x: w * 0.12, y: h * 0.72 },
+      { x: w * 0.5, y: h * 0.78 },
+      { x: w * 0.72, y: h * 0.82 },
+      { x: w * 0.35, y: h * 0.88 },
+      { x: w * 0.85, y: h * 0.92 },
+      { x: w * 0.55, y: h * 0.95 },
     ];
     return (index: number) => corners[index] ?? corners[0];
   }, []);

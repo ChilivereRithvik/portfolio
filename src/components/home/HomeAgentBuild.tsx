@@ -5,15 +5,20 @@ import {
   useCallback,
   useEffect,
   useLayoutEffect,
+  useRef,
   useState,
 } from "react";
 import { createPortal } from "react-dom";
 import { AgentCursor } from "@/components/welcome/AgentCursor";
 import { WelcomeSectionFrame } from "@/components/welcome/WelcomeSectionFrame";
 import { measureHomeAnchors } from "@/components/home/measureHomeAnchors";
-import { technologies } from "@/config/portfolio";
+import { blogs, experiences, technologies } from "@/config/portfolio";
 import { useHomeSwarm } from "@/components/home/useHomeSwarm";
 import {
+  deriveExperienceEntryPreviews,
+  deriveWritingsCardPreviews,
+  frameForExperienceStaggerAgent,
+  frameForWritingsStaggerAgent,
   HOME_AGENT_META,
   motionProgress,
   taskProgress,
@@ -36,6 +41,10 @@ type HomeAgentBuildProps = {
   techSectionRef: React.RefObject<HTMLElement | null>;
   techHeadingRef: React.RefObject<HTMLHeadingElement | null>;
   techPillsRef: React.RefObject<HTMLDivElement | null>;
+  experienceSectionRef: React.RefObject<HTMLElement | null>;
+  experienceBodyRef: React.RefObject<HTMLDivElement | null>;
+  writingsSectionRef: React.RefObject<HTMLElement | null>;
+  writingsGridRef: React.RefObject<HTMLDivElement | null>;
 };
 
 function agent(
@@ -64,6 +73,16 @@ function frameForAgent(
       return anchors.techSection;
     case "tech-ui":
       return anchors.techPills;
+    case "experience-layout":
+      return anchors.experienceSection;
+    case "experience-entries":
+    case "experience-content":
+      return anchors.experienceBody;
+    case "writings-layout":
+      return anchors.writingsSection;
+    case "writings-cards":
+    case "writings-content":
+      return anchors.writingsGrid;
     default:
       return anchors.nav;
   }
@@ -77,6 +96,12 @@ const OVERLAY_AGENTS: HomeAgentId[] = [
   "hero-links",
   "tech-layout",
   "tech-ui",
+  "experience-layout",
+  "experience-entries",
+  "experience-content",
+  "writings-layout",
+  "writings-cards",
+  "writings-content",
 ];
 
 export function HomeAgentBuild({
@@ -89,10 +114,16 @@ export function HomeAgentBuild({
   techSectionRef,
   techHeadingRef,
   techPillsRef,
+  experienceSectionRef,
+  experienceBodyRef,
+  writingsSectionRef,
+  writingsGridRef,
 }: HomeAgentBuildProps) {
   const [phase, setPhase] = useState<"building" | "complete">("building");
   const [anchors, setAnchors] = useState<HomeAnchors | null>(null);
   const [mounted, setMounted] = useState(false);
+  const scrolledExperience = useRef(false);
+  const scrolledWritings = useRef(false);
 
   useEffect(() => setMounted(true), []);
 
@@ -110,6 +141,40 @@ export function HomeAgentBuild({
       setPhase("complete");
     }
   }, [swarm.reducedMotion]);
+
+  useEffect(() => {
+    if (phase !== "building" || swarm.reducedMotion) return;
+
+    if (
+      !scrolledExperience.current &&
+      taskProgress(swarm.elapsedMs, "experience-layout") >= 0.12 &&
+      experienceSectionRef.current
+    ) {
+      scrolledExperience.current = true;
+      experienceSectionRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+
+    if (
+      !scrolledWritings.current &&
+      taskProgress(swarm.elapsedMs, "writings-layout") >= 0.12 &&
+      writingsSectionRef.current
+    ) {
+      scrolledWritings.current = true;
+      writingsSectionRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }, [
+    phase,
+    swarm.elapsedMs,
+    swarm.reducedMotion,
+    experienceSectionRef,
+    writingsSectionRef,
+  ]);
 
   useLayoutEffect(() => {
     const active =
@@ -153,7 +218,16 @@ export function HomeAgentBuild({
       techSectionRef.current,
       techHeadingRef.current,
       techPillsRef.current,
-      { stableOverlay: phase === "building", techCount: technologies.length }
+      experienceSectionRef.current,
+      experienceBodyRef.current,
+      writingsSectionRef.current,
+      writingsGridRef.current,
+      {
+        stableOverlay: phase === "building",
+        techCount: technologies.length,
+        experienceCount: experiences.length,
+        writingsCount: blogs.length,
+      }
     );
     if (next) setAnchors(next);
   }, [
@@ -166,6 +240,10 @@ export function HomeAgentBuild({
     techSectionRef,
     techHeadingRef,
     techPillsRef,
+    experienceSectionRef,
+    experienceBodyRef,
+    writingsSectionRef,
+    writingsGridRef,
   ]);
 
   useLayoutEffect(() => {
@@ -184,37 +262,60 @@ export function HomeAgentBuild({
     };
   }, [phase, measure]);
 
+  const completeView: HomeBuildView = {
+    phase: "complete",
+    typedHeroTitle: swarm.heroTitleFull,
+    typedHeroMeta: swarm.heroMetaFull ?? "",
+    heroMetaFull: swarm.heroMetaFull,
+    showHeroEmail: true,
+    typedTechHeading: "Tech Stack",
+    typedExperienceHeading: "Experience",
+    typedWritingsHeading: "Writings",
+    showHeroImage: true,
+    showHeroMeta: true,
+    showHeroLinks: true,
+    techPillCount: Number.POSITIVE_INFINITY,
+    experienceEntryPreviews: deriveExperienceEntryPreviews(1, experiences),
+    writingsCardPreviews: deriveWritingsCardPreviews(1, blogs),
+    showExperienceEntries: true,
+    showExperienceContent: true,
+    showTechSection: true,
+    showExperienceSection: true,
+    showWritingsSection: true,
+    showWritingsCards: true,
+    showWritingsContent: true,
+    showLowerSections: true,
+    heroTypeWorking: false,
+    heroTitleFull: swarm.heroTitleFull,
+    heroShellP: 1,
+    heroLayoutP: 1,
+    heroTypeP: 1,
+    heroUiP: 1,
+    techLayoutP: 1,
+    techUiP: 1,
+    experienceLayoutP: 1,
+    experienceEntriesP: 1,
+    experienceContentP: 1,
+    writingsLayoutP: 1,
+    writingsCardsP: 1,
+    writingsContentP: 1,
+    heroShellReveal: 1,
+    heroLayoutReveal: 1,
+    heroTypeReveal: 1,
+    heroUiReveal: 1,
+    techLayoutReveal: 1,
+    techUiReveal: 1,
+    experienceLayoutReveal: 1,
+    experienceEntriesReveal: 1,
+    experienceContentReveal: 1,
+    writingsLayoutReveal: 1,
+    writingsCardsReveal: 1,
+    writingsContentReveal: 1,
+  };
 
   const buildView: HomeBuildView =
     phase === "complete" || swarm.reducedMotion
-      ? {
-          phase: "complete",
-          typedHeroTitle: swarm.heroTitleFull,
-          typedHeroMeta: swarm.heroMetaFull ?? "",
-          heroMetaFull: swarm.heroMetaFull,
-          showHeroEmail: true,
-          typedTechHeading: "Tech Stack",
-          showHeroImage: true,
-          showHeroMeta: true,
-          showHeroLinks: true,
-          techPillCount: Number.POSITIVE_INFINITY,
-          showTechSection: true,
-          showLowerSections: true,
-          heroTypeWorking: false,
-          heroTitleFull: swarm.heroTitleFull,
-          heroShellP: 1,
-          heroLayoutP: 1,
-          heroTypeP: 1,
-          heroUiP: 1,
-          techLayoutP: 1,
-          techUiP: 1,
-          heroShellReveal: 1,
-          heroLayoutReveal: 1,
-          heroTypeReveal: 1,
-          heroUiReveal: 1,
-          techLayoutReveal: 1,
-          techUiReveal: 1,
-        }
+      ? completeView
       : !anchors
         ? homeBuildShellView(swarm.heroTitleFull)
         : {
@@ -224,11 +325,21 @@ export function HomeAgentBuild({
             heroMetaFull: swarm.heroMetaFull,
             showHeroEmail: swarm.showHeroEmail,
             typedTechHeading: swarm.typedTechHeading,
+            typedExperienceHeading: swarm.typedExperienceHeading,
+            typedWritingsHeading: swarm.typedWritingsHeading,
             showHeroImage: swarm.showHeroImage,
             showHeroMeta: swarm.showHeroMeta,
             showHeroLinks: swarm.showHeroLinks,
             techPillCount: swarm.techPillCount,
+            experienceEntryPreviews: swarm.experienceEntryPreviews,
+            writingsCardPreviews: swarm.writingsCardPreviews,
+            showExperienceEntries: swarm.showExperienceEntries,
+            showExperienceContent: swarm.showExperienceContent,
             showTechSection: swarm.showTechSection,
+            showExperienceSection: swarm.showExperienceSection,
+            showWritingsSection: swarm.showWritingsSection,
+            showWritingsCards: swarm.showWritingsCards,
+            showWritingsContent: swarm.showWritingsContent,
             showLowerSections: swarm.showLowerSections,
             heroTypeWorking: swarm.heroTypeWorking,
             heroTitleFull: swarm.heroTitleFull,
@@ -238,12 +349,24 @@ export function HomeAgentBuild({
             heroUiP: swarm.heroUiP,
             techLayoutP: swarm.techLayoutP,
             techUiP: swarm.techUiP,
+            experienceLayoutP: swarm.experienceLayoutP,
+            experienceEntriesP: swarm.experienceEntriesP,
+            experienceContentP: swarm.experienceContentP,
+            writingsLayoutP: swarm.writingsLayoutP,
+            writingsCardsP: swarm.writingsCardsP,
+            writingsContentP: swarm.writingsContentP,
             heroShellReveal: swarm.heroShellReveal,
             heroLayoutReveal: swarm.heroLayoutReveal,
             heroTypeReveal: swarm.heroTypeReveal,
             heroUiReveal: swarm.heroUiReveal,
             techLayoutReveal: swarm.techLayoutReveal,
             techUiReveal: swarm.techUiReveal,
+            experienceLayoutReveal: swarm.experienceLayoutReveal,
+            experienceEntriesReveal: swarm.experienceEntriesReveal,
+            experienceContentReveal: swarm.experienceContentReveal,
+            writingsLayoutReveal: swarm.writingsLayoutReveal,
+            writingsCardsReveal: swarm.writingsCardsReveal,
+            writingsContentReveal: swarm.writingsContentReveal,
           };
 
   const showOverlay = phase === "building" && !swarm.ready && !swarm.reducedMotion;
@@ -258,12 +381,27 @@ export function HomeAgentBuild({
           const a = agent(swarm.agents, id);
           const linearP = taskProgress(swarm.elapsedMs, id);
           if (!a?.working || linearP >= 1) return null;
+
+          const staggered =
+            id === "experience-entries" ||
+            id === "experience-content" ||
+            id === "writings-cards" ||
+            id === "writings-content";
+          const stagger =
+            id === "experience-entries" || id === "experience-content"
+              ? frameForExperienceStaggerAgent(anchors, linearP)
+              : staggered
+                ? frameForWritingsStaggerAgent(anchors, linearP)
+                : null;
+          const rect = stagger ?? frameForAgent(id, anchors);
+          const frameProgress = stagger ? stagger.progress : linearP;
+
           return (
             <WelcomeSectionFrame
               key={id}
               fixed
-              rect={frameForAgent(id, anchors)}
-              progress={linearP}
+              rect={rect}
+              progress={frameProgress}
               accentColor={HOME_AGENT_META[id].color}
             />
           );
