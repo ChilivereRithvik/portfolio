@@ -2,7 +2,7 @@
 
 import type { RefObject } from "react";
 import type { Experience } from "@/config/portfolio";
-import { ExperienceEntry, ExperienceProjectList } from "@/components/Experience";
+import { ExperienceEntry } from "@/components/Experience";
 import { useHomeBuild } from "@/components/home/HomeBuildContext";
 import { cn } from "@/lib/utils";
 
@@ -145,9 +145,6 @@ export function HomeExperience({
                     {preview?.description || "\u00a0"}
                   </p>
 
-                  {preview?.showProjects ? (
-                    <ExperienceProjectList experience={exp} />
-                  ) : null}
                 </div>
               </div>
             );

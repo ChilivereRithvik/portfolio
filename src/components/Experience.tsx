@@ -22,18 +22,21 @@ export function ExperienceProjectList({
 
         return (
           <li key={proj.slug}>
-            <Link
-              href={`/projects/${fullProject.id}`}
-              className="group flex flex-col gap-2 border border-dashed border-border p-4 transition-colors hover:bg-muted/25"
-            >
+            <div className="group flex flex-col gap-2 border border-dashed border-border p-4">
               <span className="flex items-start justify-between gap-2">
-                <span className="text-sm font-medium leading-snug text-foreground group-hover:text-foreground/90">
+                <span className="text-sm font-medium leading-snug text-foreground">
                   {fullProject.title}
                 </span>
-                <ArrowUpRight
-                  className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground"
-                  aria-hidden
-                />
+                <Link
+                  href="/projects"
+                  className="rounded-sm p-0.5 text-muted-foreground transition-colors hover:bg-muted/40 hover:text-foreground"
+                  aria-label={`View projects — ${fullProject.title}`}
+                >
+                  <ArrowUpRight
+                    className="h-3.5 w-3.5 shrink-0 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                    aria-hidden
+                  />
+                </Link>
               </span>
               <span className="text-xs font-medium text-muted-foreground">
                 {proj.category}
@@ -41,7 +44,7 @@ export function ExperienceProjectList({
               <p className="line-clamp-3 text-xs leading-relaxed text-muted-foreground">
                 {fullProject.description}
               </p>
-            </Link>
+            </div>
           </li>
         );
       })}
@@ -76,7 +79,6 @@ export function ExperienceEntry({ experience }: ExperienceProps) {
       <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
         {experience.description}
       </p>
-      <ExperienceProjectList experience={experience} />
     </article>
   );
 }

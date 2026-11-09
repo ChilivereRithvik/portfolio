@@ -1,7 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { AgentCursor } from "@/components/welcome/AgentCursor";
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { RadialCursorNav } from "@/components/RadialCursorNav";
+import { radialCursorNavItems } from "@/components/radialCursorNavItems";
+import { radialGoTo } from "@/lib/radialGoTo";
 
 function canUseAgentPointer() {
   if (typeof window === "undefined") return false;
@@ -10,19 +13,36 @@ function canUseAgentPointer() {
   return true;
 }
 
+function isInteractiveTarget(target: EventTarget | null) {
+  if (!(target instanceof Element)) return false;
+  return Boolean(
+    target.closest(
+      "a, button, input, textarea, select, label, [role='button'], [contenteditable='true']"
+    )
+  );
+}
+
 export function AgentPointer() {
+  const router = useRouter();
   const [enabled, setEnabled] = useState(false);
   const [pos, setPos] = useState({ x: 0, y: 0 });
   const [visible, setVisible] = useState(false);
-  const [pressing, setPressing] = useState(false);
   const [overlayActive, setOverlayActive] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const menuOpenRef = useRef(false);
+  const selectedRef = useRef(0);
+  menuOpenRef.current = menuOpen;
+  selectedRef.current = selectedIndex;
 
   useEffect(() => {
     const sync = () => {
       const root = document.documentElement;
       setOverlayActive(
         root.classList.contains("home-build-active") ||
-          root.classList.contains("home-intro-active")
+          root.classList.contains("home-intro-active") ||
+          root.classList.contains("projects-build-active")
       );
     };
     sync();
@@ -35,24 +55,91 @@ export function AgentPointer() {
   }, []);
 
   useEffect(() => {
+    if (!menuOpen) {
+      document.documentElement.classList.remove("radial-menu-active");
+      return;
+    }
+    document.documentElement.classList.add("radial-menu-active");
+    return () => {
+      document.documentElement.classList.remove("radial-menu-active");
+    };
+  }, [menuOpen]);
+
+  useEffect(() => {
     if (!canUseAgentPointer()) return;
 
     setEnabled(true);
     document.documentElement.classList.add("agentic-pointer");
+
+    const confirmSelection = () => {
+      const item = radialCursorNavItems[selectedRef.current];
+      if (item) radialGoTo(item, router);
+      setMenuOpen(false);
+    };
 
     const onMove = (e: PointerEvent) => {
       setPos({ x: e.clientX, y: e.clientY });
       setVisible(true);
     };
 
-    const onDown = () => setPressing(true);
-    const onUp = () => setPressing(false);
-    const onLeave = () => setVisible(false);
+    const onDown = (e: PointerEvent) => {
+      if (isInteractiveTarget(e.target)) return;
+
+      if (e.button === 0) {
+        e.preventDefault();
+        if (!menuOpenRef.current) {
+          setMenuOpen(true);
+          setSelectedIndex(0);
+          selectedRef.current = 0;
+        } else {
+          confirmSelection();
+        }
+        return;
+      }
+
+      if (e.button === 2 && menuOpenRef.current) {
+        e.preventDefault();
+        confirmSelection();
+      }
+    };
+
+    const onWheel = (e: WheelEvent) => {
+      if (!menuOpenRef.current) return;
+      e.preventDefault();
+      const step = e.deltaY > 0 ? 1 : -1;
+      setSelectedIndex((i) => {
+        const next =
+          (i + step + radialCursorNavItems.length) % radialCursorNavItems.length;
+        selectedRef.current = next;
+        return next;
+      });
+    };
+
+    const onContextMenu = (e: MouseEvent) => {
+      if (!menuOpenRef.current) return;
+      e.preventDefault();
+      confirmSelection();
+    };
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (!menuOpenRef.current) return;
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setMenuOpen(false);
+      }
+    };
+
+    const onLeave = () => {
+      setVisible(false);
+      setMenuOpen(false);
+    };
     const onEnter = () => setVisible(true);
 
     window.addEventListener("pointermove", onMove, { passive: true });
     window.addEventListener("pointerdown", onDown);
-    window.addEventListener("pointerup", onUp);
+    window.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("contextmenu", onContextMenu);
+    window.addEventListener("keydown", onKeyDown);
     document.documentElement.addEventListener("mouseleave", onLeave);
     document.documentElement.addEventListener("mouseenter", onEnter);
 
@@ -60,22 +147,22 @@ export function AgentPointer() {
       document.documentElement.classList.remove("agentic-pointer");
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerdown", onDown);
-      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("contextmenu", onContextMenu);
+      window.removeEventListener("keydown", onKeyDown);
       document.documentElement.removeEventListener("mouseleave", onLeave);
       document.documentElement.removeEventListener("mouseenter", onEnter);
     };
-  }, []);
+  }, [router]);
 
   if (!enabled || !visible || overlayActive) return null;
 
   return (
-    <AgentCursor
-      x={pos.x - 12}
-      y={pos.y - 8}
-      color="#f5f5f5"
-      label="You"
-      active={pressing}
-      className="welcome-agent-cursor--viewport"
+    <RadialCursorNav
+      x={pos.x}
+      y={pos.y}
+      open={menuOpen}
+      selectedIndex={selectedIndex}
     />
   );
 }

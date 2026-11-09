@@ -95,6 +95,7 @@ export const projects: Project[] = [
     ],
     links: {},
     status: "live",
+    image: "/images/projects/trunkie-hero.jpg",
   },
   {
     id: "anantix",

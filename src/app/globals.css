@@ -163,6 +163,19 @@ html.home-build-active .welcome-section-frame {
   transition: none;
 }
 
+html.projects-build-active .welcome-agent-cursor:not(.welcome-agent-cursor--exiting) {
+  opacity: 1;
+  transition: none;
+}
+
+html.projects-build-active .welcome-section-frame {
+  transition: none;
+}
+
+html.projects-build-active .welcome-agent-cursor-label {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
 html.home-build-active .welcome-agent-cursor:not(.welcome-agent-cursor--exiting) {
   transition: none;
 }
@@ -183,6 +196,16 @@ html.home-build-active .home-build-animated {
 html.agentic-pointer,
 html.agentic-pointer * {
   cursor: none !important;
+}
+
+.radial-cursor-nav,
+.radial-cursor-dot {
+  transition: transform 0.06s linear;
+}
+
+html.radial-menu-active {
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 .welcome-agent-cursor--active .welcome-agent-cursor-label {

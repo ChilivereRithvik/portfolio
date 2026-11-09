@@ -3,75 +3,82 @@ import { Download } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
+function resumeEmbedSrc(path: string) {
+  return `${path}#toolbar=0&navpanes=0&scrollbar=0&statusbar=0&view=FitH`;
+}
+
 export default function ResumePage() {
+  const github =
+    personalInfo.socialLinks.find((l) => l.icon === "github")?.url ?? "/";
+
   return (
-    <main className="pb-24">
-      <div className="max-w-2xl mx-auto px-4">
-        <div className="border-t border-border pt-12 space-y-8">
-          <div className="text-center space-y-4">
-            <h1 className="text-2xl font-bold text-foreground">
-              {personalInfo.name} Resume
+    <main className="flex h-[calc(100dvh-4rem)] flex-col overflow-hidden">
+      <div className="flex shrink-0 items-center justify-between gap-4 border-b border-dashed border-border px-4 py-3 md:px-6">
+        <div className="flex min-w-0 items-center gap-3 md:gap-4">
+          <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full border border-border md:h-14 md:w-14">
+            {personalInfo.profileImage ? (
+              <Image
+                src={personalInfo.profileImage}
+                alt={personalInfo.name}
+                width={56}
+                height={56}
+                className="h-full w-full object-cover"
+                unoptimized
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-muted text-sm font-semibold">
+                {personalInfo.displayName?.[0] ?? personalInfo.name[0]}
+              </div>
+            )}
+          </div>
+          <div className="min-w-0">
+            <h1 className="truncate text-lg font-bold text-foreground md:text-xl">
+              {personalInfo.name}
             </h1>
-            <p className="text-sm text-muted-foreground max-w-md mx-auto">
-              {personalInfo.heroHeadline}
+            <p className="truncate text-xs text-muted-foreground md:text-sm">
+              Resume
             </p>
           </div>
+        </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            {personalInfo.resumePath && (
-              <a
-                href={personalInfo.resumePath}
-                download
-                className="flex items-center justify-center gap-2 px-5 py-2.5 text-xs font-medium text-foreground border border-border rounded-md hover:bg-muted transition-colors"
-              >
-                <Download className="w-3.5 h-3.5" />
-                Download CV
-              </a>
-            )}
-            <Link
-              href={personalInfo.socialLinks.find((l) => l.icon === "github")?.url || "/"}
-              className="flex items-center justify-center gap-2 px-5 py-2.5 text-xs font-medium text-muted-foreground border border-border rounded-md hover:text-foreground hover:bg-muted transition-colors"
-            >
-              GitHub
-            </Link>
-          </div>
-
+        <div className="flex shrink-0 items-center gap-2">
           {personalInfo.resumePath ? (
-            <div className="border border-border rounded-lg overflow-hidden bg-white dark:bg-muted/20">
-              <embed
-                src={personalInfo.resumePath}
-                type="application/pdf"
-                className="w-full h-[70vh]"
-              />
-            </div>
-          ) : (
-            <div className="border border-border rounded-lg p-8 text-center">
-              <p className="text-sm text-muted-foreground">
-                Resume PDF not available.
-              </p>
-            </div>
-          )}
-
-          <div className="flex justify-center pt-6">
-            <div className="w-16 h-16 rounded-full overflow-hidden border border-border">
-              {personalInfo.profileImage ? (
-                <Image
-                  src={personalInfo.profileImage}
-                  alt={personalInfo.name}
-                  width={64}
-                  height={64}
-                  className="w-full h-full object-cover"
-                  unoptimized
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-muted text-sm font-semibold">
-                  {personalInfo.displayName?.[0] ?? personalInfo.name[0]}
-                </div>
-              )}
-            </div>
-          </div>
+            <a
+              href={personalInfo.resumePath}
+              download
+              className="flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-muted"
+            >
+              <Download className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Download</span>
+            </a>
+          ) : null}
+          <Link
+            href={github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-md border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            GitHub
+          </Link>
         </div>
       </div>
+
+      {personalInfo.resumePath ? (
+        <div className="relative min-h-0 flex-1 bg-[#525659]">
+          <embed
+            src={resumeEmbedSrc(personalInfo.resumePath)}
+            type="application/pdf"
+            title={`${personalInfo.name} resume`}
+            className="absolute inset-0 block h-full w-full border-0"
+          />
+        </div>
+      ) : (
+        <div className="flex flex-1 items-center justify-center border border-border p-8">
+          <p className="text-sm text-muted-foreground">
+            Resume PDF not available.
+          </p>
+        </div>
+      )}
     </main>
   );
 }

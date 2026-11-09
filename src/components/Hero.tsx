@@ -1,8 +1,8 @@
 "use client";
 
 import type { CSSProperties, ReactNode, RefObject } from "react";
-import Image from "next/image";
 import Link from "next/link";
+import { HeroProfileImage } from "@/components/HeroProfileImage";
 import { HiArrowUpRight, HiOutlineDocumentText } from "react-icons/hi2";
 import { personalInfo } from "@/config/portfolio";
 import { EmailCopyBadge } from "@/components/EmailCopyBadge";
@@ -170,22 +170,21 @@ export function Hero({
         <div className="flex justify-center md:col-span-4 md:justify-center">
           <div
             ref={photoRef}
-            className="relative aspect-square w-full max-w-[200px] overflow-hidden rounded-2xl md:max-w-[240px]"
+            className="relative aspect-square w-full max-w-[200px] overflow-hidden rounded-2xl bg-[#0a0a0a] md:max-w-[240px]"
           >
             {profileImage && showImage ? (
-              <Image
-                src={profileImage}
-                alt={personalInfo.name}
-                fill
-                sizes="(max-width: 768px) 200px, 240px"
-                className={cn(
-                  "object-cover ease-out",
-                  build.phase !== "building" && "transition-opacity duration-500"
-                )}
-                style={{ opacity: layoutOpacity }}
-                unoptimized
-                priority
-              />
+              <>
+                <span className="sr-only">Portrait of {personalInfo.name}</span>
+                <HeroProfileImage
+                  visible
+                  opacity={layoutOpacity}
+                  className={
+                    build.phase !== "building"
+                      ? "transition-opacity duration-500"
+                      : undefined
+                  }
+                />
+              </>
             ) : profileImage ? null : (
               <div className="flex h-full w-full items-center justify-center bg-muted/30 text-5xl font-bold text-muted-foreground/50">
                 {personalInfo.displayName.slice(0, 2).toUpperCase()}
