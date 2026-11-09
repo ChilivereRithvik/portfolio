@@ -120,7 +120,7 @@ export function ProjectsPageContent() {
           &larr; Back to home
         </Link>
 
-        <header className="mt-8 space-y-3 border-b border-dashed border-border pb-8">
+        <header className="mt-8 space-y-3">
           <h1 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
             Projects
           </h1>

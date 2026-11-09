@@ -5,7 +5,9 @@ import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { offTheClock } from "@/config/portfolio";
 import { useHomeBuild } from "@/components/home/HomeBuildContext";
+import { SectionTitle } from "@/components/SectionTitle";
 import { cn } from "@/lib/utils";
+import { Gamepad2 } from "lucide-react";
 
 type HomeOffTheClockProps = {
   sectionRef: RefObject<HTMLElement | null>;
@@ -48,11 +50,15 @@ export function HomeOffTheClock({
     >
       <div className="space-y-6 px-4 py-10 md:px-6">
         <header className="space-y-1">
-          <h2 className="min-h-[1.75rem] text-xl font-semibold text-foreground">
+          <SectionTitle
+            icon={Gamepad2}
+            className="text-foreground"
+            iconClassName="text-muted-foreground"
+          >
             {build.phase === "complete"
               ? offTheClock.title
               : build.typedOffClockHeading || "\u00a0"}
-          </h2>
+          </SectionTitle>
           <p
             className="text-sm text-muted-foreground"
             style={{

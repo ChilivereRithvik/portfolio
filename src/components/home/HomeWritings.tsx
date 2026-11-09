@@ -5,7 +5,9 @@ import Link from "next/link";
 import { ArrowUpRight, Clock } from "lucide-react";
 import type { Blog } from "@/config/portfolio";
 import { useHomeBuild } from "@/components/home/HomeBuildContext";
+import { SectionTitle } from "@/components/SectionTitle";
 import { cn } from "@/lib/utils";
+import { NotebookPen } from "lucide-react";
 
 type HomeWritingsProps = {
   sectionRef: RefObject<HTMLElement | null>;
@@ -54,19 +56,15 @@ export function HomeWritings({
         )}
       >
         <div>
-          <h2 className="min-h-[1.75rem] text-xl font-semibold text-foreground">
+          <SectionTitle
+            icon={NotebookPen}
+            className="text-foreground"
+            iconClassName="text-muted-foreground"
+          >
             {build.phase === "complete"
               ? "Writings"
               : build.typedWritingsHeading || "\u00a0"}
-          </h2>
-          <p
-            className="mt-1 min-h-[1.25rem] max-w-xl text-sm text-muted-foreground"
-            style={{
-              opacity: build.phase === "complete" ? 1 : build.writingsLayoutP,
-            }}
-          >
-            Notes on what I build, break, and learn.
-          </p>
+          </SectionTitle>
         </div>
         <Link
           href="/blogs"
@@ -93,14 +91,12 @@ export function HomeWritings({
           const showContent = build.phase === "complete" || build.showWritingsContent;
           const title =
             build.phase === "complete" ? blog.title : preview?.title || "\u00a0";
-          const excerpt =
-            build.phase === "complete" ? blog.excerpt : preview?.excerpt || "";
 
           return (
             <div
               key={blog.id}
               data-writing-card
-              className="home-build-animated relative min-h-[14rem]"
+              className="home-build-animated relative min-h-[11rem]"
             >
               <Link
                 href={blog.url}
@@ -132,10 +128,6 @@ export function HomeWritings({
                     <span className="welcome-type-caret ml-0.5 inline-block h-[1em] w-0.5 translate-y-0.5 bg-foreground align-middle" />
                   ) : null}
                 </h3>
-
-                <p className="mt-2 min-h-[3.75rem] line-clamp-3 text-sm leading-relaxed text-muted-foreground">
-                  {excerpt || "\u00a0"}
-                </p>
 
                 <p
                   className="mt-4 text-xs text-muted-foreground"

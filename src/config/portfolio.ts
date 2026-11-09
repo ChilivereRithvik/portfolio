@@ -234,6 +234,7 @@ export const projects: Project[] = [
     status: "open-source",
     contribution: "individual",
     badge: "development",
+    image: "/images/projects/telephony-voice-bot-hero.jpg",
   },
 ];
 

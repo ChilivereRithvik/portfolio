@@ -15,7 +15,7 @@ export const HERO_META_LINE = `${personalInfo.title} · ${personalInfo.location}
 export const TECH_HEADING = "Tech Stack";
 export const EXPERIENCE_HEADING = "Experience";
 export const WRITINGS_HEADING = "Writings";
-export const INDIVIDUAL_HEADING = "Individual";
+export const HOME_PROJECTS_HEADING = "Projects";
 export const OFF_CLOCK_HEADING = offTheClock.title;
 
 const HERO_TYPE_CHAR_TOTAL =
@@ -826,7 +826,7 @@ export function deriveHomeContentAt(
       experienceEntryPreviews: deriveExperienceEntryPreviews(1, experiences),
       writingsCardPreviews: deriveWritingsCardPreviews(1, blogs),
       typedExperienceHeading: EXPERIENCE_HEADING,
-      typedIndividualHeading: INDIVIDUAL_HEADING,
+      typedIndividualHeading: HOME_PROJECTS_HEADING,
       typedWritingsHeading: WRITINGS_HEADING,
       typedOffClockHeading: OFF_CLOCK_HEADING,
       experienceLayoutP: 1,
@@ -894,9 +894,9 @@ export function deriveHomeContentAt(
   const typedIndividualHeading =
     individualLayoutP <= 0
       ? ""
-      : INDIVIDUAL_HEADING.slice(
+      : HOME_PROJECTS_HEADING.slice(
           0,
-          Math.floor(individualLayoutP * INDIVIDUAL_HEADING.length)
+          Math.floor(individualLayoutP * HOME_PROJECTS_HEADING.length)
         );
   const typedWritingsHeading =
     writingsLayoutP <= 0
@@ -973,7 +973,7 @@ export function deriveHomeContentAt(
     typedExperienceHeading:
       experienceLayoutP >= 1 ? EXPERIENCE_HEADING : typedExperienceHeading,
     typedIndividualHeading:
-      individualLayoutP >= 1 ? INDIVIDUAL_HEADING : typedIndividualHeading,
+      individualLayoutP >= 1 ? HOME_PROJECTS_HEADING : typedIndividualHeading,
     typedWritingsHeading:
       writingsLayoutP >= 1 ? WRITINGS_HEADING : typedWritingsHeading,
     typedOffClockHeading:

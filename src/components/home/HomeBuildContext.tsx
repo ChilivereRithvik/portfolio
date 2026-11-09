@@ -80,7 +80,7 @@ const defaultView: HomeBuildView = {
   typedTechHeading: "",
   typedExperienceHeading: "",
   typedWritingsHeading: "",
-  typedIndividualHeading: "Individual",
+  typedIndividualHeading: "Projects",
   typedOffClockHeading: "Off The Clock",
   experienceEntryPreviews: [],
   writingsCardPreviews: [],

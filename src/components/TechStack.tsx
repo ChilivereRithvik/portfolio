@@ -5,8 +5,10 @@ import { technologies } from "@/config/portfolio";
 import { useHomeBuild } from "@/components/home/HomeBuildContext";
 import { estimateTechPillsHeight } from "@/components/home/measureHomeAnchors";
 import { staggeredItemOpacity } from "@/components/home/homeBuildTimeline";
+import { SectionTitle } from "@/components/SectionTitle";
 import { TechIcon } from "@/lib/techIcons";
 import { cn } from "@/lib/utils";
+import { Layers } from "lucide-react";
 
 type TechStackProps = {
   sectionRef: RefObject<HTMLElement | null>;
@@ -53,12 +55,14 @@ export function TechStack({
     >
       <div className="space-y-6 px-4 md:px-6">
         <div>
-          <h2
+          <SectionTitle
             ref={headingRef}
-            className="min-h-[1.75rem] text-xl font-semibold text-white"
+            icon={Layers}
+            className="text-white"
+            iconClassName="text-white/60"
           >
             {headingText}
-          </h2>
+          </SectionTitle>
           <p
             className="mt-1 min-h-[1.25rem] text-sm text-white/70"
             style={{

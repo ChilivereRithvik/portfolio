@@ -4,7 +4,9 @@ import type { RefObject } from "react";
 import type { Experience } from "@/config/portfolio";
 import { ExperienceEntry } from "@/components/Experience";
 import { useHomeBuild } from "@/components/home/HomeBuildContext";
+import { SectionTitle } from "@/components/SectionTitle";
 import { cn } from "@/lib/utils";
+import { Briefcase } from "lucide-react";
 
 const EXP_HEADING = "Experience";
 const EXP_SUB =
@@ -52,9 +54,13 @@ export function HomeExperience({
     >
       <div className="space-y-8 px-4 md:px-6">
         <div>
-          <h2 className="min-h-[1.75rem] text-xl font-semibold text-foreground">
+          <SectionTitle
+            icon={Briefcase}
+            className="text-foreground"
+            iconClassName="text-muted-foreground"
+          >
             {headingText}
-          </h2>
+          </SectionTitle>
           <p
             className="mt-1 min-h-[1.25rem] text-sm text-muted-foreground"
             style={{

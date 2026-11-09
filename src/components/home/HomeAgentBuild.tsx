@@ -150,12 +150,17 @@ export function HomeAgentBuild({
   );
   const [anchors, setAnchors] = useState<HomeAnchors | null>(null);
   const [mounted, setMounted] = useState(false);
-  const scrolledExperience = useRef(false);
-  const scrolledIndividual = useRef(false);
-  const scrolledWritings = useRef(false);
-  const scrolledOffClock = useRef(false);
 
   useEffect(() => setMounted(true), []);
+
+  useLayoutEffect(() => {
+    const prev = history.scrollRestoration;
+    history.scrollRestoration = "manual";
+    window.scrollTo(0, 0);
+    return () => {
+      history.scrollRestoration = prev;
+    };
+  }, []);
 
   const building = phase === "building";
   const swarm = useHomeSwarm(building, anchors);
@@ -171,65 +176,6 @@ export function HomeAgentBuild({
       setPhase("complete");
     }
   }, [swarm.reducedMotion]);
-
-  useEffect(() => {
-    if (phase !== "building" || swarm.reducedMotion) return;
-
-    if (
-      !scrolledExperience.current &&
-      taskProgress(swarm.elapsedMs, "experience-layout") >= 0.12 &&
-      experienceSectionRef.current
-    ) {
-      scrolledExperience.current = true;
-      experienceSectionRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
-
-    if (
-      !scrolledIndividual.current &&
-      taskProgress(swarm.elapsedMs, "individual-layout") >= 0.12 &&
-      individualSectionRef.current
-    ) {
-      scrolledIndividual.current = true;
-      individualSectionRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
-
-    if (
-      !scrolledWritings.current &&
-      taskProgress(swarm.elapsedMs, "writings-layout") >= 0.12 &&
-      writingsSectionRef.current
-    ) {
-      scrolledWritings.current = true;
-      writingsSectionRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
-    if (
-      !scrolledOffClock.current &&
-      taskProgress(swarm.elapsedMs, "offclock-layout") >= 0.12 &&
-      offClockSectionRef.current
-    ) {
-      scrolledOffClock.current = true;
-      offClockSectionRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
-  }, [
-    phase,
-    swarm.elapsedMs,
-    swarm.reducedMotion,
-    experienceSectionRef,
-    individualSectionRef,
-    writingsSectionRef,
-    offClockSectionRef,
-  ]);
 
   useLayoutEffect(() => {
     const active =
@@ -334,7 +280,7 @@ export function HomeAgentBuild({
     showHeroEmail: true,
     typedTechHeading: "Tech Stack",
     typedExperienceHeading: "Experience",
-    typedIndividualHeading: "Individual",
+    typedIndividualHeading: "Projects",
     typedWritingsHeading: "Writings",
     typedOffClockHeading: "Off The Clock",
     showHeroImage: true,

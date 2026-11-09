@@ -2,9 +2,13 @@
 
 import type { CSSProperties, ReactNode, RefObject } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { useHomeBuild } from "@/components/home/HomeBuildContext";
-import { formatProjectMeta } from "@/components/projects/projectsCopy";
+import {
+  PROJECTS_SUBTITLE,
+  formatProjectMeta,
+} from "@/components/projects/projectsCopy";
 import {
   ProjectThumbCornerBadge,
   projectThumbBadge,
@@ -14,9 +18,10 @@ import {
   homeProjectHref,
 } from "@/lib/homeIndividualProjects";
 import { staggeredItemOpacity } from "@/components/home/homeBuildTimeline";
+import { SectionTitle } from "@/components/SectionTitle";
 import { cn } from "@/lib/utils";
+import { FolderKanban } from "lucide-react";
 
-const SUBTITLE = "Independent builds outside client work.";
 
 type HomeIndividualProjectsProps = {
   sectionRef: RefObject<HTMLElement | null>;
@@ -56,20 +61,38 @@ export function HomeIndividualProjects({
       style={{ opacity: sectionOpacity }}
     >
       <div className="space-y-6 px-4 py-10 md:px-6">
-        <header className="space-y-1 border-b border-dashed border-border pb-6">
-          <h2 className="min-h-[1.75rem] text-xl font-semibold text-foreground">
-            {build.phase === "complete"
-              ? "Individual"
-              : build.typedIndividualHeading || "\u00a0"}
-          </h2>
-          <p
-            className="text-sm text-muted-foreground"
+        <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="space-y-1">
+            <SectionTitle
+              icon={FolderKanban}
+              className="text-foreground"
+              iconClassName="text-muted-foreground"
+            >
+              {build.phase === "complete"
+                ? "Projects"
+                : build.typedIndividualHeading || "\u00a0"}
+            </SectionTitle>
+            <p
+              className="max-w-xl text-sm text-muted-foreground"
+              style={{
+                opacity:
+                  build.phase === "complete" ? 1 : build.individualLayoutP,
+              }}
+            >
+              {PROJECTS_SUBTITLE}
+            </p>
+          </div>
+          <Link
+            href="/projects"
+            className="flex shrink-0 items-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
             style={{
-              opacity: build.phase === "complete" ? 1 : build.individualLayoutP,
+              opacity:
+                build.phase === "complete" ? 1 : build.individualLayoutP,
             }}
           >
-            {SUBTITLE}
-          </p>
+            View All
+            <ArrowUpRight className="h-3.5 w-3.5" />
+          </Link>
         </header>
 
         <div
