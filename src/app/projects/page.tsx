@@ -2,7 +2,8 @@ import { ProjectsPageContent } from "@/components/projects/ProjectsPageContent";
 
 export const metadata = {
   title: "Projects",
-  description: "A collection of development projects.",
+  description:
+    "Products I've contributed to professionally and individually.",
 };
 
 export default function ProjectsPage() {

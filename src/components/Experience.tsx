@@ -1,5 +1,8 @@
 import type { Experience } from "@/config/portfolio";
 import { projects, experiences } from "@/config/portfolio";
+import {
+  projectContributionLabel,
+} from "@/components/projects/projectsCopy";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
@@ -9,9 +12,7 @@ type ExperienceProps = {
   experience: Experience;
 };
 
-export function ExperienceProjectList({
-  experience,
-}: ExperienceProps) {
+export function ExperienceProjectList({ experience }: ExperienceProps) {
   if (experience.projects.length === 0) return null;
 
   return (
@@ -39,6 +40,8 @@ export function ExperienceProjectList({
                 </Link>
               </span>
               <span className="text-xs font-medium text-muted-foreground">
+                {projectContributionLabel(fullProject.contribution)}
+                <span className="text-muted-foreground/60"> · </span>
                 {proj.category}
               </span>
               <p className="line-clamp-3 text-xs leading-relaxed text-muted-foreground">
@@ -79,6 +82,7 @@ export function ExperienceEntry({ experience }: ExperienceProps) {
       <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
         {experience.description}
       </p>
+      <ExperienceProjectList experience={experience} />
     </article>
   );
 }

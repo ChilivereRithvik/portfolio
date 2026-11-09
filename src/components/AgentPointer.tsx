@@ -41,8 +41,7 @@ export function AgentPointer() {
       const root = document.documentElement;
       setOverlayActive(
         root.classList.contains("home-build-active") ||
-          root.classList.contains("home-intro-active") ||
-          root.classList.contains("projects-build-active")
+          root.classList.contains("home-intro-active")
       );
     };
     sync();

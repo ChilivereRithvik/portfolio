@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Inter, Geist_Mono } from "next/font/google";
-import { AgentPointer } from "@/components/AgentPointer";
 import { Footer } from "@/components/Footer";
 import { SiteNav } from "@/components/SiteNav";
 import "./globals.css";
@@ -62,7 +61,6 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${geistMono.variable} min-h-screen bg-[#0a0a0a] text-white antialiased`}
       >
-        <AgentPointer />
         <div className="mx-auto max-w-4xl border-x border-dashed border-border">
           <header
             data-home-nav

@@ -48,6 +48,7 @@ export type Project = {
     live?: string;
   };
   status: "live" | "open-source" | "archived";
+  contribution: "professional" | "individual";
   image?: string;
 };
 
@@ -93,8 +94,11 @@ export const projects: Project[] = [
       "Terraform",
       "Docker",
     ],
-    links: {},
+    links: {
+      live: "https://trunkie.in",
+    },
     status: "live",
+    contribution: "professional",
     image: "/images/projects/trunkie-hero.jpg",
   },
   {
@@ -122,8 +126,12 @@ export const projects: Project[] = [
       "Railway",
       "AWS ECS",
     ],
-    links: {},
+    links: {
+      live: "https://anantix.ai",
+    },
     status: "live",
+    contribution: "professional",
+    image: "/images/projects/anantix-hero.png",
   },
   {
     id: "call-the-doctor",
@@ -153,8 +161,12 @@ export const projects: Project[] = [
       "AWS S3",
       "Redis",
     ],
-    links: {},
+    links: {
+      live: "https://play.google.com/store/apps/details?id=com.callthedoctor.app",
+    },
+    image: "/images/projects/call-the-doctor-hero.png",
     status: "live",
+    contribution: "individual",
   },
   {
     id: "ops-ai",
@@ -170,7 +182,9 @@ export const projects: Project[] = [
     ],
     technologies: ["React.js", "shadcn/ui", "JWT", "TanStack Query", "TypeScript"],
     links: {},
+    image: "/images/projects/ops-ai-hero.png",
     status: "live",
+    contribution: "professional",
   },
 ];
 
