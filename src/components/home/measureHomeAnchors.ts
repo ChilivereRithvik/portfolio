@@ -5,6 +5,17 @@ function toViewportRect(el: DOMRect) {
   return { x: el.left, y: el.top, w: el.width, h: el.height };
 }
 
+/** Prefer live layout when the node exists; estimates only before first paint. */
+function measureOrEstimate(
+  el: HTMLElement | null,
+  estimate: DOMRect
+): DOMRect {
+  if (el && el.offsetHeight > 0) {
+    return el.getBoundingClientRect();
+  }
+  return estimate;
+}
+
 function point(x: number, y: number) {
   return { x, y };
 }
@@ -132,7 +143,7 @@ function estimateWritingsBlock(afterSection: DOMRect, writingsCount: number) {
   const top = afterSection.bottom;
   const width = afterSection.width;
   const headerH = 120;
-  const rowH = 220;
+  const rowH = 176;
   const rows = Math.max(1, Math.ceil(writingsCount / 2));
   const gridH = rows * rowH;
   const sectionH = headerH + gridH;
@@ -373,38 +384,18 @@ export function measureHomeAnchors(
   const individualCount = options?.individualCount ?? 2;
   const writingsCount = options?.writingsCount ?? 2;
   const techEst = estimateTechBlock(shell, techCount);
-  const stable = options?.stableOverlay ?? false;
 
-  const tech = stable
-    ? techEst.section
-    : techSection && techSection.offsetHeight > 0
-      ? techSection.getBoundingClientRect()
-      : techEst.section;
-  const heading = stable
-    ? techEst.heading
-    : techHeading && techHeading.offsetHeight > 0
-      ? techHeading.getBoundingClientRect()
-      : techEst.heading;
-  const pills = stable
-    ? techEst.pills
-    : techPills && techPills.offsetHeight > 0
-      ? techPills.getBoundingClientRect()
-      : techEst.pills;
+  const tech = measureOrEstimate(techSection, techEst.section);
+  const heading = measureOrEstimate(techHeading, techEst.heading);
+  const pills = measureOrEstimate(techPills, techEst.pills);
 
-  const linksBox = stable
-    ? estimateHeroLinks(shell)
-    : heroLinks && heroLinks.offsetHeight > 0
-      ? heroLinks.getBoundingClientRect()
-      : estimateHeroLinks(shell);
+  const linksBox = measureOrEstimate(heroLinks, estimateHeroLinks(shell));
 
   const linksRect = toViewportRect(linksBox);
 
   const copyEst = estimateHeroCopy(title);
-  const copyBox =
-    stable || !heroCopy || heroCopy.offsetHeight <= 0
-      ? copyEst.copy
-      : heroCopy.getBoundingClientRect();
-  const emailEl = !stable ? heroCopy?.querySelector<HTMLElement>("[data-hero-email]") : null;
+  const copyBox = measureOrEstimate(heroCopy, copyEst.copy);
+  const emailEl = heroCopy?.querySelector<HTMLElement>("[data-hero-email]");
   const emailBox = emailEl?.getBoundingClientRect();
   const emailTL = emailBox
     ? point(emailBox.left + 8, emailBox.top + emailBox.height * 0.5)
@@ -412,51 +403,29 @@ export function measureHomeAnchors(
   const emailBR = emailBox
     ? point(emailBox.right - 8, emailBox.top + emailBox.height * 0.5)
     : copyEst.emailBR;
-  const metaLine = !stable ? heroCopy?.querySelector<HTMLElement>("[data-hero-meta]") : null;
+  const metaLine = heroCopy?.querySelector<HTMLElement>("[data-hero-meta]");
   const metaBox = metaLine?.getBoundingClientRect();
   const metaCaret = metaBox
     ? point(metaBox.left + 8, metaBox.top + metaBox.height * 0.55)
     : copyEst.metaCaret;
 
+  const stable = options?.stableOverlay ?? false;
+
   const expEst = estimateExperienceBlock(tech, experienceCount);
-  const experience =
-    stable || !experienceSection || experienceSection.offsetHeight <= 0
-      ? expEst.section
-      : experienceSection.getBoundingClientRect();
-  const experienceContent =
-    stable || !experienceBody || experienceBody.offsetHeight <= 0
-      ? expEst.body
-      : experienceBody.getBoundingClientRect();
+  const experience = measureOrEstimate(experienceSection, expEst.section);
+  const experienceContent = measureOrEstimate(experienceBody, expEst.body);
 
   const indEst = estimateIndividualBlock(experience, individualCount);
-  const individual =
-    stable || !individualSection || individualSection.offsetHeight <= 0
-      ? indEst.section
-      : individualSection.getBoundingClientRect();
-  const individualCards =
-    stable || !individualGrid || individualGrid.offsetHeight <= 0
-      ? indEst.grid
-      : individualGrid.getBoundingClientRect();
+  const individual = measureOrEstimate(individualSection, indEst.section);
+  const individualCards = measureOrEstimate(individualGrid, indEst.grid);
 
   const writEst = estimateWritingsBlock(individual, writingsCount);
-  const writings =
-    stable || !writingsSection || writingsSection.offsetHeight <= 0
-      ? writEst.section
-      : writingsSection.getBoundingClientRect();
-  const writingsCards =
-    stable || !writingsGrid || writingsGrid.offsetHeight <= 0
-      ? writEst.grid
-      : writingsGrid.getBoundingClientRect();
+  const writings = measureOrEstimate(writingsSection, writEst.section);
+  const writingsCards = measureOrEstimate(writingsGrid, writEst.grid);
 
   const offEst = estimateOffClockBlock(writings);
-  const offClock =
-    stable || !offClockSection || offClockSection.offsetHeight <= 0
-      ? offEst.section
-      : offClockSection.getBoundingClientRect();
-  const offClockContent =
-    stable || !offClockBody || offClockBody.offsetHeight <= 0
-      ? offEst.body
-      : offClockBody.getBoundingClientRect();
+  const offClock = measureOrEstimate(offClockSection, offEst.section);
+  const offClockContent = measureOrEstimate(offClockBody, offEst.body);
 
   return {
     nav: toViewportRect(navBox),

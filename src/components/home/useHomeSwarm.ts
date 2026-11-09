@@ -30,6 +30,8 @@ export function useHomeSwarm(
     return () => mq.removeEventListener("change", apply);
   }, []);
 
+  const anchorsReady = anchors !== null;
+
   useEffect(() => {
     if (!enabled || reducedMotion) {
       startRef.current = null;
@@ -37,7 +39,7 @@ export function useHomeSwarm(
       return;
     }
 
-    if (!anchors) {
+    if (!anchorsReady) {
       setElapsedMs(0);
       return;
     }
@@ -56,7 +58,7 @@ export function useHomeSwarm(
     raf = requestAnimationFrame(frame);
 
     return () => cancelAnimationFrame(raf);
-  }, [enabled, reducedMotion, anchors]);
+  }, [enabled, reducedMotion, anchorsReady]);
 
   const content = useMemo(
     () =>
@@ -73,22 +75,17 @@ export function useHomeSwarm(
   const spawnCorner = useMemo(() => {
     const w = typeof window !== "undefined" ? window.innerWidth : 1200;
     const h = typeof window !== "undefined" ? window.innerHeight : 800;
+    const cx = anchors?.heroShell.x ?? w * 0.5;
+    const colW = anchors?.heroShell.w ?? Math.min(896, w);
+    const colL = anchors?.heroShell.x ?? (w - colW) / 2;
     const corners = [
-      { x: w * 0.06, y: h * 0.05 },
-      { x: w * 0.92, y: h * 0.06 },
-      { x: w * 0.08, y: h * 0.22 },
-      { x: w * 0.9, y: h * 0.2 },
-      { x: w * 0.1, y: h * 0.42 },
-      { x: w * 0.88, y: h * 0.55 },
-      { x: w * 0.12, y: h * 0.72 },
-      { x: w * 0.5, y: h * 0.78 },
-      { x: w * 0.72, y: h * 0.82 },
-      { x: w * 0.35, y: h * 0.88 },
-      { x: w * 0.85, y: h * 0.92 },
-      { x: w * 0.55, y: h * 0.95 },
+      { x: colL - 40, y: h * 0.14 },
+      { x: colL + colW + 40, y: h * 0.16 },
+      { x: colL - 36, y: h * 0.38 },
+      { x: colL + colW + 36, y: h * 0.4 },
     ];
-    return (index: number) => corners[index] ?? corners[0];
-  }, []);
+    return (index: number) => corners[index % corners.length] ?? { x: cx, y: h * 0.2 };
+  }, [anchors?.heroShell.x, anchors?.heroShell.w]);
 
   const agents = useMemo(
     () => computeHomeAgentsAt(elapsedMs, anchors, spawnCorner),

@@ -632,6 +632,22 @@ function lerp(a: number, b: number, t: number) {
   return a + (b - a) * t;
 }
 
+export function homeAgentSpawnPoint(
+  anchors: HomeAnchors,
+  id: HomeAgentId,
+  index: number
+): { x: number; y: number } {
+  const idle = idlePoint(id, anchors);
+  const col = anchors.heroShell;
+  const fromLeft = index % 2 === 0;
+  const pad = 32 + (index % 4) * 10;
+  const vh = typeof window !== "undefined" ? window.innerHeight : 800;
+  return {
+    x: fromLeft ? col.x - pad : col.x + col.w + pad,
+    y: Math.min(Math.max(idle.y, 80), vh - 48),
+  };
+}
+
 function idlePoint(id: HomeAgentId, anchors: HomeAnchors) {
   switch (id) {
     case "nav-layout":
@@ -822,7 +838,9 @@ export function computeHomeAgentsAt(
       active = false;
     }
 
-    const fallback = spawnCorner(index);
+    const fallback = anchors
+      ? homeAgentSpawnPoint(anchors, id, index)
+      : spawnCorner(index);
     let x = fallback.x;
     let y = fallback.y;
 

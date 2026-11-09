@@ -159,6 +159,7 @@ export function HomeAgentBuild({
   const scrolledWritings = useRef(false);
   const scrolledOffClock = useRef(false);
   const didInitialScrollTopRef = useRef(false);
+  const lastAnchorRefreshMsRef = useRef(-1);
 
   useEffect(() => setMounted(true), []);
 
@@ -330,7 +331,21 @@ export function HomeAgentBuild({
   useLayoutEffect(() => {
     if (phase === "complete") return;
     measure();
+    const raf = requestAnimationFrame(() => {
+      requestAnimationFrame(() => measure({ force: true }));
+    });
+    return () => cancelAnimationFrame(raf);
   }, [phase, measure]);
+
+  useEffect(() => {
+    if (phase !== "building" || swarm.reducedMotion) return;
+    const gates = [0, 900, 2700, 4350, 5450, 6850];
+    const elapsed = swarm.elapsedMs;
+    const gate = [...gates].reverse().find((g) => elapsed >= g && lastAnchorRefreshMsRef.current < g);
+    if (gate === undefined) return;
+    lastAnchorRefreshMsRef.current = gate;
+    measure({ force: true });
+  }, [phase, swarm.elapsedMs, swarm.reducedMotion, measure]);
 
   useEffect(() => {
     if (phase !== "building") return;
